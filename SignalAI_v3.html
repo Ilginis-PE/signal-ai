@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Signal.AI v3 — Quant Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --accent: #00D4AA; --accent2: #0099FF; --bg: #080C18; --surface: #0F1624;
+  --surface2: #161E30; --surface3: #1C2640; --border: #1E2D45;
+  --text: #E2E8F0; --muted: #64748B; --warn: #F59E0B; --red: #EF4444;
+  --green: #10B981; --purple: #8B5CF6; --mono: 'JetBrains Mono', monospace;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; }
+header {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 14px 28px; display: flex; align-items: center; gap: 14px;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.logo-name { font-size: 16px; font-weight: 800; letter-spacing: -0.03em; }
+.logo-name span { color: var(--accent); }
+.logo-ver { font-size: 10px; font-weight: 700; color: var(--accent); background: rgba(0,212,170,0.12); border: 1px solid rgba(0,212,170,0.25); padding: 2px 6px; border-radius: 4px; font-family: var(--mono); }
+.nav { margin-left: auto; display: flex; gap: 4px; }
+.nav-btn { padding: 7px 14px; border-radius: 7px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; color: var(--muted); font-family: inherit; transition: all 0.15s; }
+.nav-btn.active { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+main { max-width: 980px; margin: 0 auto; padding: 36px 22px; }
+.view { display: none; }
+.view.active { display: block; }
+
+/* API KEY BANNER */
+.api-banner {
+  background: var(--surface); border: 1px solid rgba(0,212,170,0.4);
+  border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
+}
+.api-banner.hidden { display: none; }
+.api-banner-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.api-banner-sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.6; }
+.api-input-row { display: flex; gap: 10px; }
+.api-input {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 13px;
+  outline: none; font-family: var(--mono);
+}
+.api-input:focus { border-color: var(--accent); }
+.api-save-btn { padding: 10px 18px; background: var(--accent); border: none; border-radius: 8px; color: #000; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.api-saved { display: none; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 10px 16px; font-size: 13px; color: var(--green); align-items: center; gap: 10px; justify-content: space-between; }
+.api-saved.show { display: flex; }
+.api-change-btn { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--muted); font-size: 12px; cursor: pointer; font-family: inherit; }
+
+/* HERO */
+.hero { margin-bottom: 32px; }
+.hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-family: var(--mono); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.hero-eyebrow::before { content:''; width: 24px; height: 1px; background: var(--accent); }
+.hero h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 10px; }
+.hero p { color: var(--muted); font-size: 14px; line-height: 1.65; max-width: 600px; }
+.accent { color: var(--accent); }
+
+/* CARDS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 18px; }
+.card-pad { padding: 22px; }
+.card-header { padding: 13px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--surface2); }
+.card-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.card-title { font-weight: 700; font-size: 13px; letter-spacing: 0.02em; }
+.card-body { padding: 18px 20px; }
+.card-meta { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* TABS */
+.tab-row { display: flex; gap: 3px; background: var(--surface2); border-radius: 9px; padding: 4px; margin-bottom: 20px; }
+.tab-btn { flex: 1; padding: 8px; border-radius: 7px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; color: var(--muted); font-family: inherit; transition: all 0.15s; }
+.tab-btn.active { background: var(--accent); color: #000; }
+
+/* INPUTS */
+.field-label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+input[type="text"], textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; color: var(--text); font-size: 14px; outline: none; font-family: inherit; transition: border-color 0.15s; }
+input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
+textarea { resize: vertical; line-height: 1.6; min-height: 150px; font-size: 13px; }
+input::placeholder, textarea::placeholder { color: #2A3550; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+.hint-link { color: var(--accent); text-decoration: underline; cursor: pointer; }
+.help-box { background: var(--surface2); border-radius: 9px; padding: 14px; margin-top: 10px; font-size: 13px; color: var(--muted); line-height: 1.75; display: none; border: 1px solid var(--border); }
+.help-box.show { display: block; }
+.help-box strong { color: var(--text); }
+.analyze-btn { width: 100%; padding: 15px; margin-top: 16px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 9px; color: #000; font-weight: 800; font-size: 15px; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+.analyze-btn:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
+.btn-outline { padding: 9px 16px; background: transparent; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.error-box { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); border-radius: 9px; padding: 11px 14px; font-size: 13px; color: var(--red); margin-top: 12px; display: none; }
+.error-box.show { display: block; }
+
+/* LOADING */
+.loading-wrap { text-align: center; padding: 56px 0; color: var(--muted); display: none; }
+.loading-wrap.show { display: block; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top: 3px solid var(--accent); border-radius: 50%; margin: 0 auto 18px; animation: spin 0.8s linear infinite; }
+.loading-steps { display: flex; flex-direction: column; gap: 6px; align-items: center; margin-top: 14px; }
+.loading-step { font-size: 12px; font-family: var(--mono); color: var(--muted); opacity: 0.4; transition: opacity 0.4s; }
+.loading-step.active { opacity: 1; color: var(--accent); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* RESULTS */
+.results { display: none; flex-direction: column; gap: 18px; }
+.results.show { display: flex; }
+
+/* SCORE RINGS */
+.score-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.score-ring { position: relative; width: 90px; height: 90px; }
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring-val { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 22px; font-weight: 800; font-family: var(--mono); }
+.score-ring-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* METER */
+.meter { margin-bottom: 14px; }
+.meter-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.meter-label { font-size: 12px; font-weight: 600; color: var(--muted); }
+.meter-val { font-size: 13px; font-weight: 700; font-family: var(--mono); }
+.meter-track { height: 6px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
+
+/* CHIPS */
+.chip { display: inline-block; padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; margin: 3px 4px 3px 0; }
+.chip-mono { font-family: var(--mono); font-size: 11px; }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+
+/* GRIDS */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 12px; }
+.stat-box { background: var(--surface2); border-radius: 9px; padding: 14px 15px; border: 1px solid var(--border); }
+.stat-label { font-size: 10px; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.07em; }
+.stat-val { font-size: 18px; font-weight: 800; font-family: var(--mono); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:600px){ .two-col { grid-template-columns: 1fr; } }
+
+/* LISTS */
+.blist { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.bitem { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.55; }
+.bdot { width: 6px; height: 6px; border-radius: 50%; margin-top: 8px; flex-shrink: 0; }
+
+/* CLAIM TABLE */
+.claim-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.claim-table th { text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--border); background: var(--surface2); }
+.claim-table td { padding: 10px 12px; border-bottom: 1px solid rgba(30,45,69,0.6); vertical-align: top; line-height: 1.5; }
+.claim-table tr:last-child td { border-bottom: none; }
+.claim-type { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; font-family: var(--mono); white-space: nowrap; }
+
+/* BULL BEAR */
+.bb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:560px){ .bb-grid { grid-template-columns: 1fr; } }
+.bb-col { background: var(--surface2); border-radius: 10px; padding: 16px; border: 1px solid var(--border); }
+.bb-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+
+/* CATALYST */
+.cat-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid rgba(30,45,69,0.6); }
+.cat-item:last-child { border-bottom: none; }
+.cat-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.cat-name { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+.cat-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.cat-horizon { font-size: 11px; font-family: var(--mono); color: var(--accent); margin-top: 4px; }
+.chart-wrap { position: relative; height: 220px; margin-top: 8px; }
+
+/* ENTITIES */
+.entity-grid { display: flex; flex-direction: column; gap: 8px; }
+.entity-row { display: flex; gap: 12px; align-items: center; background: var(--surface2); border-radius: 8px; padding: 10px 14px; border: 1px solid var(--border); }
+.entity-name { font-weight: 600; font-size: 14px; min-width: 120px; }
+.entity-type { font-size: 11px; font-family: var(--mono); }
+.entity-role { font-size: 13px; color: var(--muted); flex: 1; }
+
+/* QA */
+.qa-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.qa-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 11px 14px; color: var(--text); font-size: 14px; outline: none; font-family: inherit; }
+.qa-input:focus { border-color: var(--accent); }
+.qa-btn { padding: 11px 20px; background: var(--accent); border: none; border-radius: 9px; color: #000; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.qa-answer { background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 16px; font-size: 14px; line-height: 1.65; display: none; }
+.qa-answer.show { display: block; }
+
+/* EXPORT */
+.export-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* KB */
+.kb-toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.kb-search { flex: 1; min-width: 200px; background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 10px 14px; color: var(--text); font-size: 14px; outline: none; font-family: inherit; }
+.kb-search:focus { border-color: var(--accent); }
+.kb-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 12px; margin-bottom: 24px; }
+.kb-stat { background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; }
+.kb-stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.kb-stat-val { font-size: 22px; font-weight: 800; font-family: var(--mono); color: var(--accent); }
+.kb-stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.saved-list { display: flex; flex-direction: column; gap: 8px; }
+.saved-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: border-color 0.15s; }
+.saved-item:hover { border-color: var(--accent); }
+.saved-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.saved-meta { font-size: 12px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.del-btn { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 20px; padding: 0 4px; line-height: 1; flex-shrink: 0; }
+.pattern-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.pattern-tag { background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3); color: var(--purple); padding: 5px 13px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.empty-state { text-align: center; padding: 64px 0; color: var(--muted); }
+.empty-icon { font-size: 42px; margin-bottom: 14px; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">📊</div>
+    <span class="logo-name">Signal<span>.</span>AI</span>
+    <span class="logo-ver">QUANT v3</span>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" id="nb-analyze" onclick="switchView('analyze')">Analyze</button>
+    <button class="nav-btn" id="nb-kb" onclick="switchView('kb')">Knowledge Base</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ANALYZE VIEW -->
+<div class="view active" id="view-analyze">
+
+  <!-- API KEY BANNER -->
+  <div class="api-banner" id="api-banner">
+    <div class="api-banner-title">🔑 Enter your free Gemini API Key to get started</div>
+    <div class="api-banner-sub">
+      Get your free key at <strong style="color:var(--text)">aistudio.google.com</strong> → Get API Key → Create API Key. Free, no credit card needed. Saved locally in your browser.
+    </div>
+    <div class="api-input-row">
+      <input class="api-input" type="password" id="api-key-input" placeholder="AIzaSy..." />
+      <button class="api-save-btn" onclick="saveApiKey()">Save Key</button>
+    </div>
+  </div>
+  <div class="api-saved" id="api-saved">
+    <span>✅ Gemini API key saved — ready to analyze</span>
+    <button class="api-change-btn" onclick="changeApiKey()">Change Key</button>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Quantitative Media Intelligence</div>
+    <h1>Deep signal extraction from<br><span class="accent">financial video content</span></h1>
+    <p>Paste a transcript from any financial video. Get quant scores, claim classification, catalyst mapping, entity analysis, bull/bear cases, and cross-video pattern detection — powered by free Gemini AI.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-pad">
+      <div class="tab-row">
+        <button class="tab-btn active" id="t-url" onclick="switchTab('url')">YouTube URL</button>
+        <button class="tab-btn" id="t-paste" onclick="switchTab('paste')">Paste Transcript</button>
+      </div>
+      <div id="p-url">
+        <label class="field-label">Video URL</label>
+        <input type="text" id="url-input" placeholder="https://youtube.com/watch?v=..." />
+        <p class="hint">Paste URL and AI will try to find the transcript. <span class="hint-link" onclick="toggleHelp()">Prefer to paste manually? →</span></p>
+        <div class="help-box" id="help-box">
+          <strong>Get transcript via Glasp (recommended):</strong><br/>
+          1. Open video in Chrome with Glasp extension<br/>
+          2. Click Transcript in the Glasp panel<br/>
+          3. Copy all the text<br/>
+          4. Switch to <strong>Paste Transcript</strong> tab and paste<br/><br/>
+          <strong>No Glasp?</strong> Click <strong>...</strong> under video → <strong>Show transcript</strong> → copy
+        </div>
+      </div>
+      <div id="p-paste" style="display:none">
+        <label class="field-label">Transcript Text</label>
+        <textarea id="transcript-input" placeholder="Paste transcript here — Glasp format, YouTube format, or plain text all work..."></textarea>
+        <p class="hint">Timestamps and formatting are stripped automatically.</p>
+      </div>
+      <div class="error-box" id="error-box"></div>
+      <button class="analyze-btn" id="analyze-btn" onclick="analyze()">Run Quant Analysis →</button>
+    </div>
+  </div>
+
+  <div class="loading-wrap" id="loading">
+    <div class="spinner"></div>
+    <div style="font-weight:700;font-size:15px;margin-bottom:6px">Processing signal…</div>
+    <div class="loading-steps">
+      <div class="loading-step active" id="ls1">▸ Cleaning &amp; parsing transcript</div>
+      <div class="loading-step" id="ls2">▸ Extracting financial entities</div>
+      <div class="loading-step" id="ls3">▸ Scoring sentiment &amp; conviction</div>
+      <div class="loading-step" id="ls4">▸ Classifying claims &amp; catalysts</div>
+      <div class="loading-step" id="ls5">▸ Building bull/bear framework</div>
+      <div class="loading-step" id="ls6">▸ Generating quant output</div>
+    </div>
+  </div>
+
+  <div class="results" id="results">
+
+    <!-- QUANT SCORECARD -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(0,212,170,0.13)">⚡</div>
+        <span class="card-title">QUANT SCORECARD</span>
+        <div class="card-meta" id="hdr-badges"></div>
+      </div>
+      <div class="card-body">
+        <div id="result-title" style="font-weight:800;font-size:18px;margin-bottom:8px;letter-spacing:-0.02em"></div>
+        <div id="result-summary" style="font-size:14px;line-height:1.7;color:#94A3B8;margin-bottom:20px"></div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px;padding:18px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
+          <div class="score-ring-wrap">
+            <div class="score-ring"><svg width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="36" fill="none" stroke="var(--border)" stroke-width="7"/><circle cx="45" cy="45" r="36" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" id="ring-sentiment" stroke-dasharray="226" stroke-dashoffset="226"/></svg><div class="score-ring-val accent" id="val-sentiment">—</div></div>
+            <div class="score-ring-label">Sentiment</div>
+          </div>
+          <div class="score-ring-wrap">
+            <div class="score-ring"><svg width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="36" fill="none" stroke="var(--border)" stroke-width="7"/><circle cx="45" cy="45" r="36" fill="none" stroke="var(--warn)" stroke-width="7" stroke-linecap="round" id="ring-conviction" stroke-dasharray="226" stroke-dashoffset="226"/></svg><div class="score-ring-val" style="color:var(--warn)" id="val-conviction">—</div></div>
+            <div class="score-ring-label">Conviction</div>
+          </div>
+          <div class="score-ring-wrap">
+            <div class="score-ring"><svg width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="36" fill="none" stroke="var(--border)" stroke-width="7"/><circle cx="45" cy="45" r="36" fill="none" stroke="var(--accent2)" stroke-width="7" stroke-linecap="round" id="ring-data" stroke-dasharray="226" stroke-dashoffset="226"/></svg><div class="score-ring-val" style="color:var(--accent2)" id="val-data">—</div></div>
+            <div class="score-ring-label">Data Density</div>
+          </div>
+          <div class="score-ring-wrap">
+            <div class="score-ring"><svg width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="36" fill="none" stroke="var(--border)" stroke-width="7"/><circle cx="45" cy="45" r="36" fill="none" stroke="var(--purple)" stroke-width="7" stroke-linecap="round" id="ring-contrarian" stroke-dasharray="226" stroke-dashoffset="226"/></svg><div class="score-ring-val" style="color:var(--purple)" id="val-contrarian">—</div></div>
+            <div class="score-ring-label">Contrarian</div>
+          </div>
+          <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:10px;justify-content:center">
+            <div id="meter-horizon"></div>
+            <div id="meter-risk"></div>
+          </div>
+        </div>
+        <div id="asset-classes-wrap" style="display:none;margin-bottom:16px">
+          <div class="field-label" style="margin-bottom:8px">Asset Classes</div>
+          <div id="asset-chips"></div>
+        </div>
+        <div class="two-col">
+          <div id="tickers-wrap" style="display:none"><div class="field-label" style="margin-bottom:8px">Tickers &amp; Instruments</div><div id="ticker-chips"></div></div>
+          <div id="macro-wrap" style="display:none"><div class="field-label" style="margin-bottom:8px">Macro Themes</div><div id="macro-chips"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAIM CLASSIFIER -->
+    <div class="card" id="claims-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(0,153,255,0.13)">🔬</div>
+        <span class="card-title">CLAIM CLASSIFIER</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">FACT · OPINION · PREDICTION · WARNING</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="claim-table"><thead><tr><th>Type</th><th>Claim</th><th>Confidence</th></tr></thead><tbody id="claims-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- BULL BEAR -->
+    <div class="card" id="bb-card" style="display:none">
+      <div class="card-header"><div class="card-icon" style="background:rgba(16,185,129,0.13)">⚖️</div><span class="card-title">BULL / BEAR FRAMEWORK</span></div>
+      <div class="card-body">
+        <div class="bb-grid">
+          <div class="bb-col" style="border-color:rgba(16,185,129,0.3)"><div class="bb-title" style="color:var(--green)">🟢 Bull Case</div><ul class="blist" id="bull-list"></ul></div>
+          <div class="bb-col" style="border-color:rgba(239,68,68,0.3)"><div class="bb-title" style="color:var(--red)">🔴 Bear Case</div><ul class="blist" id="bear-list"></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATALYST MAP -->
+    <div class="card" id="catalyst-card" style="display:none">
+      <div class="card-header"><div class="card-icon" style="background:rgba(245,158,11,0.13)">🎯</div><span class="card-title">CATALYST MAP</span></div>
+      <div class="card-body">
+        <div id="catalyst-list"></div>
+        <div class="chart-wrap" style="margin-top:20px"><canvas id="catalyst-chart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- DATA POINTS -->
+    <div class="card" id="data-card" style="display:none">
+      <div class="card-header"><div class="card-icon" style="background:rgba(0,212,170,0.13)">📈</div><span class="card-title">KEY DATA POINTS</span></div>
+      <div class="card-body"><div class="stat-grid" id="stat-grid"></div></div>
+    </div>
+
+    <!-- ENTITIES -->
+    <div class="card" id="entities-card" style="display:none">
+      <div class="card-header"><div class="card-icon" style="background:rgba(139,92,246,0.13)">🗺️</div><span class="card-title">NAMED ENTITIES</span></div>
+      <div class="card-body"><div class="entity-grid" id="entity-grid"></div></div>
+    </div>
+
+    <!-- CONTRARIAN -->
+    <div class="card" id="contrarian-card" style="display:none">
+      <div class="card-header"><div class="card-icon" style="background:rgba(239,68,68,0.13)">⚠️</div><span class="card-title">CONTRARIAN FLAGS &amp; RISKS</span></div>
+      <div class="card-body"><ul class="blist" id="contrarian-list"></ul></div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="card" id="actions-card" style="display:none">
+      <div class="card-header"><div class="card-icon" style="background:rgba(16,185,129,0.13)">✅</div><span class="card-title">ACTION ITEMS</span></div>
+      <div class="card-body"><ul class="blist" id="actions-list"></ul></div>
+    </div>
+
+    <!-- QA -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon" style="background:rgba(139,92,246,0.13)">💬</div><span class="card-title">ASK THE VIDEO</span></div>
+      <div class="card-body">
+        <div class="qa-row">
+          <input class="qa-input" type="text" id="qa-input" placeholder="e.g. What is the main investment thesis? What catalysts were mentioned?" onkeydown="if(event.key==='Enter')askQ()" />
+          <button class="qa-btn" id="qa-btn" onclick="askQ()">Ask</button>
+        </div>
+        <div class="qa-answer" id="qa-answer"></div>
+      </div>
+    </div>
+
+    <!-- SAVE EXPORT -->
+    <div class="card">
+      <div class="card-header"><div class="card-icon" style="background:rgba(100,116,139,0.13)">💾</div><span class="card-title">SAVE &amp; EXPORT</span></div>
+      <div class="card-body">
+        <div class="export-row">
+          <button class="btn-outline" style="border:1px solid var(--accent);color:var(--accent)" onclick="saveEntry()">📚 Save to Knowledge Base</button>
+          <button class="btn-outline" style="border:1px solid var(--text);color:var(--text)" onclick="exportJSON()">⬇ Export JSON</button>
+          <button class="btn-outline" style="border:1px solid var(--text);color:var(--text)" onclick="exportCSV()">⬇ Export CSV</button>
+          <button class="btn-outline" style="border:1px solid var(--text);color:var(--text)" onclick="exportKB()">⬇ Backup Full KB</button>
+          <button class="btn-outline" style="border:1px solid var(--purple);color:var(--purple)" onclick="copyKB()">📋 Copy KB to Clipboard</button>
+          <label class="btn-outline" style="border:1px solid var(--purple);color:var(--purple);cursor:pointer">⬆ Import KB<input type="file" accept=".json" style="display:none" onchange="importKB(event)"></label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- KB VIEW -->
+<div class="view" id="view-kb">
+  <div class="hero">
+    <div class="hero-eyebrow">Persistent Intelligence</div>
+    <h1>Knowledge Base</h1>
+    <p>All your saved analyses. Search across them, spot patterns, and export your dataset.</p>
+  </div>
+  <div class="kb-stats" id="kb-stats-row"></div>
+  <div id="kb-patterns-wrap" style="display:none;margin-bottom:24px">
+    <div class="card">
+      <div class="card-header"><div class="card-icon" style="background:rgba(139,92,246,0.13)">🧠</div><span class="card-title">CROSS-VIDEO PATTERNS</span></div>
+      <div class="card-body">
+        <div id="kb-patterns"></div>
+        <div class="chart-wrap" style="margin-top:16px"><canvas id="kb-ticker-chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div class="kb-toolbar">
+    <input class="kb-search" type="text" id="kb-search" placeholder="Search by title, ticker, theme…" oninput="renderKB()" />
+    <button class="btn-outline" style="border:1px solid var(--text);color:var(--text)" onclick="exportKB()">⬇ Backup All</button>
+    <button class="btn-outline" style="border:1px solid var(--purple);color:var(--purple)" onclick="copyKB()">📋 Copy to Clipboard</button>
+    <label class="btn-outline" style="border:1px solid var(--purple);color:var(--purple);cursor:pointer">⬆ Restore<input type="file" accept=".json" style="display:none" onchange="importKB(event)"></label>
+  </div>
+  <div id="kb-list-wrap"></div>
+</div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════
+// GEMINI API
+// ═══════════════════════════════════════════
+const GEMINI_MODEL = 'gemini-2.5-flash';
+
+const SYSTEM_PROMPT = `You are a quantitative financial analyst. Analyze the video transcript below and return a single valid JSON object. 
+
+CRITICAL RULES:
+- Return ONLY the JSON object. Nothing before it. Nothing after it.
+- No markdown. No backticks. No code fences. No explanations.
+- All string values must use double quotes only, never single quotes.
+- No trailing commas anywhere.
+- If a field has no data, use an empty array [].
+
+JSON structure to return:
+{
+  "title": "string",
+  "summary": "string",
+  "sentimentLabel": "Bullish",
+  "sentimentScore": 50,
+  "convictionScore": 50,
+  "dataDensityScore": 50,
+  "contrarianScore": 50,
+  "timeHorizon": "Mixed",
+  "timeHorizonMonths": 12,
+  "riskLevel": "Medium",
+  "riskScore": 50,
+  "assetClasses": ["Equities"],
+  "tickers": ["BTC"],
+  "macroThemes": ["Inflation"],
+  "dataPoints": [{"label": "string", "value": "string"}],
+  "claims": [{"type": "FACT", "text": "string", "confidence": 90}],
+  "bullCase": ["string"],
+  "bearCase": ["string"],
+  "catalysts": [{"name": "string", "description": "string", "horizon": "Short-term", "icon": "📈", "urgency": 75}],
+  "entities": [{"name": "string", "type": "PERSON", "role": "string"}],
+  "contrarianFlags": ["string"],
+  "actionItems": ["string"],
+  "keyInsights": ["string"]
+}
+
+Scoring guide:
+- sentimentLabel: Bullish, Bearish, Neutral, or Mixed
+- sentimentScore: 0=extremely bearish, 50=neutral, 100=extremely bullish
+- convictionScore: 0=very uncertain speaker, 100=very confident speaker
+- dataDensityScore: 0=all opinion, 100=all hard data and numbers
+- contrarianScore: 0=mainstream consensus, 100=strongly contrarian
+- claims type must be exactly one of: FACT, OPINION, PREDICTION, WARNING
+- entities type must be exactly one of: PERSON, INSTITUTION, COUNTRY, COMPANY
+
+Extract real numbers and statistics when mentioned. Return ONLY the JSON object with no other text.`;
+
+async function callGemini(prompt, systemInstruction) {
+  const key = getApiKey();
+  if (!key) { showErr('Please enter your Gemini API key above first.'); return null; }
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
+  const body = {
+    system_instruction: { parts: [{ text: systemInstruction }] },
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.3, maxOutputTokens: 8192 }
+  };
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    const msg = err?.error?.message || resp.statusText;
+    if (resp.status === 400) throw new Error('Invalid API key. Check your key at aistudio.google.com');
+    if (resp.status === 429) throw new Error('Rate limit hit. Wait 60 seconds and try again.');
+    throw new Error('Gemini API error ' + resp.status + ': ' + msg);
+  }
+
+  const data = await resp.json();
+  return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+// ═══════════════════════════════════════════
+// API KEY MANAGEMENT
+// ═══════════════════════════════════════════
+function getApiKey() { return localStorage.getItem('signal_ai_gemini_key') || ''; }
+
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) return alert('Please paste your Gemini API key.');
+  if (key.length < 20) return alert('That key looks too short. Please paste the full API key.');
+  localStorage.setItem('signal_ai_gemini_key', key);
+  document.getElementById('api-banner').classList.add('hidden');
+  document.getElementById('api-saved').classList.add('show');
+}
+
+function changeApiKey() {
+  document.getElementById('api-banner').classList.remove('hidden');
+  document.getElementById('api-saved').classList.remove('show');
+  document.getElementById('api-key-input').value = '';
+}
+
+function initApiKey() {
+  const key = getApiKey();
+  if (key) {
+    document.getElementById('api-banner').classList.add('hidden');
+    document.getElementById('api-saved').classList.add('show');
+  }
+}
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let currentResult = null;
+let currentTranscript = '';
+let activeTab = 'url';
+let catalystChart = null;
+let kbTickerChart = null;
+let savedEntries = [];
+try { savedEntries = JSON.parse(localStorage.getItem('signalai_v3') || '[]'); } catch(e) { savedEntries = []; }
+
+// ═══════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.getElementById('nb-' + v).classList.add('active');
+  if (v === 'kb') renderKB();
+}
+function switchTab(t) {
+  activeTab = t;
+  document.getElementById('p-url').style.display = t==='url'?'block':'none';
+  document.getElementById('p-paste').style.display = t==='paste'?'block':'none';
+  document.getElementById('t-url').classList.toggle('active', t==='url');
+  document.getElementById('t-paste').classList.toggle('active', t==='paste');
+}
+function toggleHelp() { document.getElementById('help-box').classList.toggle('show'); }
+function showErr(m) { const e=document.getElementById('error-box'); e.textContent='⚠ '+m; e.classList.add('show'); }
+function hideErr() { document.getElementById('error-box').classList.remove('show'); }
+function setLoading(on) {
+  document.getElementById('loading').classList.toggle('show', on);
+  document.getElementById('analyze-btn').disabled = on;
+  document.getElementById('analyze-btn').textContent = on ? 'Analyzing…' : 'Run Quant Analysis →';
+}
+
+function cleanTranscript(raw) {
+  return raw
+    .replace(/^.*?- YouTube\s*/i,'')
+    .replace(/https?:\/\/\S+/g,'')
+    .replace(/^Transcript:\s*/im,'')
+    .replace(/\(\d{1,2}:\d{2}(?::\d{2})?\)\s*/g,'')
+    .replace(/\[Music\]/gi,'')
+    .replace(/\[Applause\]/gi,'')
+    .replace(/\[Laughter\]/gi,'')
+    .replace(/\[.*?\]/g,'')
+    .replace(/>> /g,'')
+    .replace(/[^\x00-\x7F]/g,' ')
+    .replace(/\s{3,}/g,' ')
+    .replace(/\n{3,}/g,'\n\n')
+    .trim();
+}
+
+function animateLoadingSteps() {
+  ['ls1','ls2','ls3','ls4','ls5','ls6'].forEach((id,i) => {
+    document.getElementById(id).classList.remove('active');
+    setTimeout(() => document.getElementById(id).classList.add('active'), i*900);
+  });
+}
+
+// ═══════════════════════════════════════════
+// ANALYZE
+// ═══════════════════════════════════════════
+async function analyze() {
+  hideErr();
+  currentResult = null;
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('qa-answer').classList.remove('show');
+
+  let content = '';
+  if (activeTab === 'url') {
+    const url = document.getElementById('url-input').value.trim();
+    if (!url) return showErr('Please enter a YouTube URL.');
+    // For URL mode, ask Gemini to search — but note this may not work without grounding
+    content = `Please analyze this YouTube video: ${url}\n\nExtract all financial insights from the video content.`;
+    currentTranscript = content;
+  } else {
+    content = document.getElementById('transcript-input').value.trim();
+    if (!content) return showErr('Please paste a transcript.');
+    content = cleanTranscript(content);
+    currentTranscript = content;
+  }
+
+  if (!content || content.length < 80) { return showErr('Content too short. Please paste a longer transcript.'); }
+
+  setLoading(true);
+  animateLoadingSteps();
+
+  try {
+    const raw = await callGemini('Analyze this financial video transcript:\n\n' + content.slice(0, 14000), SYSTEM_PROMPT);
+    if (!raw) { setLoading(false); return; }
+
+    let jsonStr = raw;
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) jsonStr = match[0];
+    jsonStr = jsonStr.replace(/```json|```/g,'').trim();
+
+    try {
+      currentResult = JSON.parse(jsonStr);
+      renderResults(currentResult);
+    } catch(e) {
+      try {
+        const fixed = jsonStr
+          .replace(/,\s*}/g, '}')
+          .replace(/,\s*]/g, ']');
+        currentResult = JSON.parse(fixed);
+        renderResults(currentResult);
+      } catch(e2) {
+        // Show raw response for debugging
+        const preview = raw.slice(-300);
+        showErr('DEBUG — Raw Gemini response (first 500 chars): ' + preview);
+      }
+    }
+  } catch(e) {
+    showErr(e.message || 'Analysis failed. Check your API key and internet connection.');
+  }
+  setLoading(false);
+}
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function chip(text, color) { return `<span class="chip chip-mono" style="background:${color}22;color:${color};border:1px solid ${color}44">${text}</span>`; }
+function bitem(text, color) { return `<li class="bitem"><div class="bdot" style="background:${color}"></div><span>${text}</span></li>`; }
+function sentColor(s) { return {Bullish:'#00D4AA',Bearish:'#EF4444',Neutral:'#64748B',Mixed:'#F59E0B'}[s]||'#64748B'; }
+function riskColor(r) { return {Low:'#10B981',Medium:'#F59E0B',High:'#EF4444'}[r]||'#64748B'; }
+function claimColor(t) { return {FACT:'#0099FF',OPINION:'#F59E0B',PREDICTION:'#8B5CF6',WARNING:'#EF4444'}[t]||'#64748B'; }
+function entityColor(t) { return {PERSON:'#00D4AA',INSTITUTION:'#0099FF',COUNTRY:'#F59E0B',COMPANY:'#8B5CF6',CONCEPT:'#64748B'}[t]||'#64748B'; }
+function setRing(id, score, color) { const el=document.getElementById(id); if(el){el.style.stroke=color;el.style.strokeDashoffset=226-(226*score/100);} }
+function makeMeter(label, val, color) {
+  const pct = typeof val==='number'?val:50;
+  return `<div class="meter"><div class="meter-top"><span class="meter-label">${label}</span><span class="meter-val" style="color:${color}">${val}</span></div><div class="meter-track"><div class="meter-fill" style="width:0%;background:${color}" data-target="${pct}"></div></div></div>`;
+}
+function animateMeters() { document.querySelectorAll('.meter-fill').forEach(el => { setTimeout(()=>{el.style.width=el.getAttribute('data-target')+'%';},100); }); }
+
+function renderResults(r) {
+  const sc = sentColor(r.sentimentLabel);
+  const rc = riskColor(r.riskLevel);
+  document.getElementById('hdr-badges').innerHTML =
+    `<span class="chip" style="background:${sc}22;color:${sc};border:1px solid ${sc}44">${r.sentimentLabel}</span>` +
+    `<span class="badge" style="background:${rc}22;color:${rc};border:1px solid ${rc}44">${r.riskLevel==='High'?'🔴':r.riskLevel==='Medium'?'🟡':'🟢'} ${r.riskLevel} Risk</span>` +
+    `<span class="badge" style="background:rgba(139,92,246,0.12);color:var(--purple);border:1px solid rgba(139,92,246,0.3)">⏱ ${r.timeHorizon}</span>`;
+
+  document.getElementById('result-title').textContent = r.title||'';
+  document.getElementById('result-summary').textContent = r.summary||'';
+
+  setRing('ring-sentiment', r.sentimentScore||50, sc);
+  setRing('ring-conviction', r.convictionScore||50, '#F59E0B');
+  setRing('ring-data', r.dataDensityScore||50, '#0099FF');
+  setRing('ring-contrarian', r.contrarianScore||50, '#8B5CF6');
+  document.getElementById('val-sentiment').textContent = r.sentimentScore||'—';
+  document.getElementById('val-conviction').textContent = r.convictionScore||'—';
+  document.getElementById('val-data').textContent = r.dataDensityScore||'—';
+  document.getElementById('val-contrarian').textContent = r.contrarianScore||'—';
+
+  document.getElementById('meter-horizon').innerHTML = makeMeter('Time Horizon', r.timeHorizon, '#8B5CF6');
+  document.getElementById('meter-risk').innerHTML = makeMeter('Risk Score', r.riskScore||50, rc);
+  animateMeters();
+
+  const aColors = {Equities:'#00D4AA',Crypto:'#F59E0B',Macro:'#0099FF',Commodities:'#EF4444','Fixed Income':'#10B981','Real Estate':'#8B5CF6'};
+  if (r.assetClasses?.length) { document.getElementById('asset-chips').innerHTML=r.assetClasses.map(a=>chip(a,aColors[a]||'#64748B')).join(''); document.getElementById('asset-classes-wrap').style.display='block'; }
+  if (r.tickers?.length) { document.getElementById('ticker-chips').innerHTML=r.tickers.map(t=>chip(t,'#00D4AA')).join(''); document.getElementById('tickers-wrap').style.display='block'; } else { document.getElementById('tickers-wrap').style.display='none'; }
+  if (r.macroThemes?.length) { document.getElementById('macro-chips').innerHTML=r.macroThemes.map(m=>chip(m,'#64748B')).join(''); document.getElementById('macro-wrap').style.display='block'; } else { document.getElementById('macro-wrap').style.display='none'; }
+
+  if (r.claims?.length) {
+    document.getElementById('claims-tbody').innerHTML = r.claims.map(c=>`<tr><td><span class="claim-type" style="background:${claimColor(c.type)}22;color:${claimColor(c.type)}">${c.type}</span></td><td>${c.text}</td><td><span style="font-family:var(--mono);font-size:13px;color:${c.confidence>75?'var(--green)':c.confidence>50?'var(--warn)':'var(--red)'};font-weight:700">${c.confidence}%</span></td></tr>`).join('');
+    document.getElementById('claims-card').style.display='block';
+  } else { document.getElementById('claims-card').style.display='none'; }
+
+  if (r.bullCase?.length||r.bearCase?.length) {
+    document.getElementById('bull-list').innerHTML=(r.bullCase||[]).map(i=>bitem(i,'#10B981')).join('');
+    document.getElementById('bear-list').innerHTML=(r.bearCase||[]).map(i=>bitem(i,'#EF4444')).join('');
+    document.getElementById('bb-card').style.display='block';
+  } else { document.getElementById('bb-card').style.display='none'; }
+
+  if (r.catalysts?.length) {
+    document.getElementById('catalyst-list').innerHTML = r.catalysts.map(c=>`<div class="cat-item"><div class="cat-icon">${c.icon||'📌'}</div><div><div class="cat-name">${c.name}</div><div class="cat-desc">${c.description}</div><div class="cat-horizon">${c.horizon} · Urgency: ${c.urgency}/100</div></div><div style="margin-left:auto;display:flex;align-items:center"><div style="width:40px;height:40px;position:relative"><svg width="40" height="40" viewBox="0 0 40 40" style="transform:rotate(-90deg)"><circle cx="20" cy="20" r="14" fill="none" stroke="var(--border)" stroke-width="4"/><circle cx="20" cy="20" r="14" fill="none" stroke="var(--warn)" stroke-width="4" stroke-linecap="round" stroke-dasharray="88" stroke-dashoffset="${88-(88*c.urgency/100)}"/></svg><span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:9px;font-weight:700;font-family:var(--mono);color:var(--warn)">${c.urgency}</span></div></div></div>`).join('');
+    if (catalystChart) catalystChart.destroy();
+    const ctx = document.getElementById('catalyst-chart').getContext('2d');
+    catalystChart = new Chart(ctx, { type:'bar', data:{ labels:r.catalysts.map(c=>c.name), datasets:[{label:'Urgency',data:r.catalysts.map(c=>c.urgency),backgroundColor:r.catalysts.map(c=>`rgba(${c.urgency>75?'245,158,11':c.urgency>50?'0,153,255':'100,116,139'},0.7)`),borderRadius:6,borderSkipped:false}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748B',font:{family:'Inter',size:11}},grid:{color:'rgba(30,45,69,0.5)'}},y:{min:0,max:100,ticks:{color:'#64748B'},grid:{color:'rgba(30,45,69,0.5)'},border:{display:false}}}}});
+    document.getElementById('catalyst-card').style.display='block';
+  } else { document.getElementById('catalyst-card').style.display='none'; }
+
+  if (r.dataPoints?.length) { document.getElementById('stat-grid').innerHTML=r.dataPoints.map(d=>`<div class="stat-box"><div class="stat-label">${d.label}</div><div class="stat-val" style="color:var(--accent)">${d.value}</div></div>`).join(''); document.getElementById('data-card').style.display='block'; } else { document.getElementById('data-card').style.display='none'; }
+  if (r.entities?.length) { document.getElementById('entity-grid').innerHTML=r.entities.map(e=>`<div class="entity-row"><div class="entity-name">${e.name}</div><span class="entity-type" style="background:${entityColor(e.type)}22;color:${entityColor(e.type)};padding:3px 8px;border-radius:4px;border:1px solid ${entityColor(e.type)}44">${e.type}</span><div class="entity-role">${e.role}</div></div>`).join(''); document.getElementById('entities-card').style.display='block'; } else { document.getElementById('entities-card').style.display='none'; }
+  if (r.contrarianFlags?.length) { document.getElementById('contrarian-list').innerHTML=r.contrarianFlags.map(f=>bitem(f,'#EF4444')).join(''); document.getElementById('contrarian-card').style.display='block'; } else { document.getElementById('contrarian-card').style.display='none'; }
+  if (r.actionItems?.length) { document.getElementById('actions-list').innerHTML=r.actionItems.map(a=>bitem(a,'#10B981')).join(''); document.getElementById('actions-card').style.display='block'; } else { document.getElementById('actions-card').style.display='none'; }
+
+  document.getElementById('results').classList.add('show');
+  setTimeout(()=>{ document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}); animateMeters(); },100);
+}
+
+// ═══════════════════════════════════════════
+// Q&A
+// ═══════════════════════════════════════════
+async function askQ() {
+  const q = document.getElementById('qa-input').value.trim();
+  if (!q||!currentTranscript) return;
+  const btn=document.getElementById('qa-btn'); btn.textContent='…'; btn.disabled=true;
+  document.getElementById('qa-answer').classList.remove('show');
+  try {
+    const ans = await callGemini(`Transcript:\n${currentTranscript.slice(0,8000)}\n\nQuestion: ${q}`, 'You are a quantitative financial analyst. Answer questions about the video transcript concisely and precisely, citing specific evidence from the transcript.');
+    const el=document.getElementById('qa-answer'); el.textContent=ans||'No answer found.'; el.classList.add('show');
+  } catch(e) { const el=document.getElementById('qa-answer'); el.textContent='Error: '+e.message; el.classList.add('show'); }
+  btn.textContent='Ask'; btn.disabled=false;
+}
+
+// ═══════════════════════════════════════════
+// KNOWLEDGE BASE
+// ═══════════════════════════════════════════
+function saveKB() { try { localStorage.setItem('signalai_v3', JSON.stringify(savedEntries)); } catch(e){} updateNavCount(); }
+
+function saveEntry() {
+  if (!currentResult) return;
+  savedEntries.unshift({ id:Date.now(), date:new Date().toLocaleDateString(), title:currentResult.title, sentiment:currentResult.sentimentLabel, sentimentScore:currentResult.sentimentScore, riskLevel:currentResult.riskLevel, tickers:currentResult.tickers||[], macroThemes:currentResult.macroThemes||[], assetClasses:currentResult.assetClasses||[], result:currentResult, transcript:currentTranscript });
+  saveKB();
+  alert('✅ Saved to Knowledge Base!');
+}
+
+function updateNavCount() { document.getElementById('nb-kb').textContent = savedEntries.length ? `Knowledge Base (${savedEntries.length})` : 'Knowledge Base'; }
+
+function renderKB() {
+  const q=(document.getElementById('kb-search')?.value||'').toLowerCase();
+  const filtered=savedEntries.filter(e=>!q||e.title?.toLowerCase().includes(q)||e.tickers?.some(t=>t.toLowerCase().includes(q))||e.macroThemes?.some(t=>t.toLowerCase().includes(q))||e.sentiment?.toLowerCase().includes(q));
+  const allTickers=savedEntries.flatMap(e=>e.tickers||[]);
+  const tc={};allTickers.forEach(t=>{tc[t]=(tc[t]||0)+1;});
+  const topT=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const avgS=savedEntries.length?Math.round(savedEntries.reduce((a,e)=>a+(e.sentimentScore||50),0)/savedEntries.length):0;
+  document.getElementById('kb-stats-row').innerHTML=`<div class="kb-stat"><div class="kb-stat-label">Saved</div><div class="kb-stat-val">${savedEntries.length}</div></div><div class="kb-stat"><div class="kb-stat-label">Avg Sentiment</div><div class="kb-stat-val">${avgS}</div><div class="kb-stat-sub">out of 100</div></div><div class="kb-stat"><div class="kb-stat-label">Unique Tickers</div><div class="kb-stat-val">${Object.keys(tc).length}</div></div><div class="kb-stat"><div class="kb-stat-label">Top Ticker</div><div class="kb-stat-val" style="font-size:16px">${topT[0]?topT[0][0]:'—'}</div><div class="kb-stat-sub">${topT[0]?topT[0][1]+' mentions':''}</div></div>`;
+  if (savedEntries.length>=2) {
+    const allThemes=savedEntries.flatMap(e=>e.macroThemes||[]);const thC={};allThemes.forEach(t=>{thC[t]=(thC[t]||0)+1;});
+    const topTh=Object.entries(thC).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    const pats=topTh.filter(([,c])=>c>1).map(([t,c])=>`${t} (${c}x)`);
+    if (pats.length) {
+      document.getElementById('kb-patterns').innerHTML=`<p style="font-size:13px;color:var(--muted);margin-bottom:10px">Themes across multiple videos:</p><div class="pattern-list">${pats.map(p=>`<span class="pattern-tag">${p}</span>`).join('')}</div>`;
+      document.getElementById('kb-patterns-wrap').style.display='block';
+      if (topT.length>=2) {
+        if (kbTickerChart) kbTickerChart.destroy();
+        const ctx2=document.getElementById('kb-ticker-chart').getContext('2d');
+        kbTickerChart=new Chart(ctx2,{type:'bar',data:{labels:topT.map(([t])=>t),datasets:[{label:'Mentions',data:topT.map(([,c])=>c),backgroundColor:'rgba(0,212,170,0.6)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Most Mentioned Tickers Across All Videos',color:'#94A3B8',font:{family:'Inter',size:12}}},scales:{x:{ticks:{color:'#64748B'},grid:{color:'rgba(30,45,69,0.5)'}},y:{ticks:{color:'#64748B'},grid:{color:'rgba(30,45,69,0.5)'},border:{display:false},min:0}}}});
+      }
+    } else { document.getElementById('kb-patterns-wrap').style.display='none'; }
+  }
+  const wrap=document.getElementById('kb-list-wrap');
+  if (!filtered.length) { wrap.innerHTML=savedEntries.length?`<div class="empty-state"><div class="empty-icon">🔍</div><div>No results for "${q}"</div></div>`:`<div class="empty-state"><div class="empty-icon">📂</div><div>No saved analyses yet.<br>Analyze a video and click <strong>Save to Knowledge Base</strong>.</div></div>`; return; }
+  wrap.innerHTML=`<div class="saved-list">${filtered.map(s=>`<div class="saved-item" onclick="loadSaved(${s.id})"><div style="flex:1;min-width:0"><div class="saved-title">${s.title}</div><div class="saved-meta"><span>${s.date}</span>${(s.tickers||[]).slice(0,4).map(t=>`<span style="color:var(--accent);font-family:var(--mono);font-size:11px">${t}</span>`).join('')}<span style="color:${sentColor(s.sentiment)}">${s.sentiment}</span><span style="color:${riskColor(s.riskLevel)}">${s.riskLevel} Risk</span></div></div><button class="del-btn" onclick="event.stopPropagation();deleteSaved(${s.id})">×</button></div>`).join('')}</div>`;
+}
+
+function loadSaved(id) { const e=savedEntries.find(s=>s.id===id); if(!e)return; currentResult=e.result; currentTranscript=e.transcript; switchView('analyze'); renderResults(currentResult); }
+function deleteSaved(id) { if(!confirm('Delete this analysis?'))return; savedEntries=savedEntries.filter(s=>s.id!==id); saveKB(); renderKB(); }
+
+// ═══════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════
+function dl(content, name, type) {
+  try {
+    const blob=new Blob([content],{type});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  } catch(e) {
+    const a=document.createElement('a');
+    a.href=(type.includes('json')?'data:application/json;':'data:text/csv;')+'charset=utf-8,'+encodeURIComponent(content);
+    a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+}
+function exportJSON() { if(!currentResult)return; dl(JSON.stringify({result:currentResult,transcript:currentTranscript},null,2),`signal-ai-${Date.now()}.json`,'application/json'); }
+function exportCSV() {
+  if(!currentResult)return;
+  const r=currentResult;
+  const rows=[['Field','Value'],['Title',r.title],['Summary',r.summary],['Sentiment',r.sentimentLabel],['Sentiment Score',r.sentimentScore],['Conviction',r.convictionScore],['Data Density',r.dataDensityScore],['Contrarian',r.contrarianScore],['Risk',r.riskLevel],['Risk Score',r.riskScore],['Time Horizon',r.timeHorizon],['Asset Classes',(r.assetClasses||[]).join(', ')],['Tickers',(r.tickers||[]).join(', ')],['Macro Themes',(r.macroThemes||[]).join(', ')],,...(r.dataPoints||[]).map(d=>[d.label,d.value]),['Bull Case',(r.bullCase||[]).join(' | ')],['Bear Case',(r.bearCase||[]).join(' | ')],['Action Items',(r.actionItems||[]).join(' | ')]];
+  dl(rows.map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n'),`signal-ai-${Date.now()}.csv`,'text/csv');
+}
+function exportKB() { dl(JSON.stringify(savedEntries,null,2),`signal-ai-kb-${Date.now()}.json`,'application/json'); }
+function copyKB() {
+  const text=JSON.stringify(savedEntries,null,2);
+  navigator.clipboard.writeText(text).then(()=>alert('✅ Knowledge Base copied!\n\nPaste into Notepad and save as signal-ai-backup.json')).catch(()=>{const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);alert('✅ Copied! Paste into Notepad and save as .json');});
+}
+function importKB(e) {
+  const file=e.target.files[0]; if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try {
+      const data=JSON.parse(ev.target.result);
+      if(Array.isArray(data)){if(confirm(`Import ${data.length} entries? Merges with your ${savedEntries.length} existing.`)){const ids=new Set(savedEntries.map(e=>e.id));data.forEach(e=>{if(!ids.has(e.id))savedEntries.push(e);});savedEntries.sort((a,b)=>b.id-a.id);saveKB();renderKB();alert(`✅ Imported! KB now has ${savedEntries.length} entries.`);}}else{alert('Invalid backup file.');}
+    } catch{alert('Could not read file.');}
+  };
+  r.readAsText(file);
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+initApiKey();
+updateNavCount();
+</script>
+</body>
+</html>
