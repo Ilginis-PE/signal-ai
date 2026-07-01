@@ -719,7 +719,7 @@ async function callGemini(prompt, systemInstruction) {
 // ═══════════════════════════════════════════
 // API KEY MANAGEMENT
 // ═══════════════════════════════════════════
-function getApiKey() { return localStorage.getItem('signal_ai_gemini_key') || ''; }
+function getApiKey() { return localStorage.getItem('signal_ai_gemini_key') || 'AQ.Ab8RN6J-U6Ea82RSbAhdmz8XgdbYrdl4QXOI0yvPtjvuT62AnQ'; }
 
 function saveApiKey() {
   const key = document.getElementById('api-key-input').value.trim();
@@ -737,11 +737,10 @@ function changeApiKey() {
 }
 
 function initApiKey() {
-  const key = getApiKey();
-  if (key) {
-    document.getElementById('api-banner').classList.add('hidden');
-    document.getElementById('api-saved').classList.add('show');
-  }
+  // Key is hardcoded - always hide banner and show saved
+  localStorage.setItem('signal_ai_gemini_key', 'AQ.Ab8RN6J-U6Ea82RSbAhdmz8XgdbYrdl4QXOI0yvPtjvuT62AnQ');
+  document.getElementById('api-banner').classList.add('hidden');
+  document.getElementById('api-saved').classList.add('show');
 }
 
 // ═══════════════════════════════════════════
