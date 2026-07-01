@@ -1184,7 +1184,8 @@ async function loadMacroData() {
   const results = {};
   const promises = FRED_SERIES.map(async (series) => {
     try {
-      const url = `${FRED_BASE}?series_id=${series.id}&api_key=${FRED_API_KEY}&file_type=json&limit=2&sort_order=desc`;
+      const fredUrl = `${FRED_BASE}?series_id=${series.id}&api_key=${FRED_API_KEY}&file_type=json&limit=2&sort_order=desc`;
+      const url = `https://corsproxy.io/?${encodeURIComponent(fredUrl)}`;
       const resp = await fetch(url);
       if (!resp.ok) throw new Error('FRED error');
       const data = await resp.json();
@@ -1347,10 +1348,18 @@ async function loadWatchlist() {
         price = cryptoPrices.bitcoin.usd;
         change = cryptoPrices.bitcoin.usd_24h_change;
       }
-      // Use CoinGecko gold proxy for Gold
-      else if (asset.symbol === 'GLD' && cryptoPrices.gold) {
-        price = cryptoPrices.gold.usd;
-        change = cryptoPrices.gold.usd_24h_change;
+      // GLD via proxy same as other ETFs
+      else if (asset.symbol === 'GLD') {
+        const proxyUrl = `https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=2d`;
+        const resp = await fetch(proxyUrl);
+        const data = await resp.json();
+        const result = data.chart?.result?.[0];
+        if (result) {
+          const closes = result.indicators?.quote?.[0]?.close || [];
+          price = closes[closes.length - 1];
+          const previous = closes[closes.length - 2] || price;
+          change = ((price - previous) / previous * 100);
+        }
       }
       // Try public CORS proxy for ETFs
       else {
