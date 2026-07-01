@@ -199,6 +199,59 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* MACRO DASHBOARD */
+.macro-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; margin-bottom: 24px; }
+.macro-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; position: relative; overflow: hidden; }
+.macro-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.macro-card.positive::before { background: var(--green); }
+.macro-card.negative::before { background: var(--red); }
+.macro-card.neutral::before { background: var(--muted); }
+.macro-card.warning::before { background: var(--warn); }
+.macro-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+.macro-value { font-size: 28px; font-weight: 800; font-family: var(--mono); margin-bottom: 4px; }
+.macro-change { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+.macro-desc { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+.macro-signal { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-top: 8px; font-family: var(--mono); }
+.regime-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 24px; }
+.regime-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.regime-name { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; }
+.regime-desc { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 600px; }
+.regime-indicators { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.regime-pill { padding: 5px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.fred-source { font-size: 10px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+.macro-section-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; margin-top: 28px; display: flex; align-items: center; gap: 8px; }
+.macro-section-title::after { content:''; flex:1; height:1px; background: var(--border); }
+.refresh-btn { padding: 8px 16px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+.loading-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s ease infinite; margin-right: 6px; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+.indicator-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(30,45,69,0.6); }
+.indicator-row:last-child { border-bottom: none; }
+.indicator-name { font-size: 13px; font-weight: 600; }
+.indicator-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.indicator-val { font-size: 16px; font-weight: 800; font-family: var(--mono); text-align: right; }
+.indicator-signal { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; font-family: var(--mono); margin-top: 3px; text-align: right; }
+.watchlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; margin-bottom: 24px; }
+.watch-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color 0.15s; }
+.watch-card:hover { border-color: var(--accent); }
+.watch-ticker { font-size: 16px; font-weight: 800; font-family: var(--mono); margin-bottom: 2px; }
+.watch-name { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.watch-price { font-size: 22px; font-weight: 800; font-family: var(--mono); }
+.watch-change { font-size: 12px; font-weight: 700; margin-top: 3px; }
+.watch-signal { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 4px; display: inline-block; margin-top: 8px; font-family: var(--mono); }
+.last-updated { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+
+/* FRAMEWORK SCORES */
+.framework-grid { display: flex; flex-direction: column; gap: 10px; }
+.framework-row { display: flex; align-items: center; gap: 14px; }
+.framework-name { font-size: 12px; font-weight: 600; color: var(--text); min-width: 220px; }
+.framework-bar-wrap { flex: 1; height: 8px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+.framework-bar { height: 100%; border-radius: 99px; transition: width 1s ease; }
+.framework-score { font-size: 13px; font-weight: 800; font-family: var(--mono); min-width: 40px; text-align: right; }
+.framework-label { font-size: 10px; font-family: var(--mono); padding: 2px 6px; border-radius: 4px; font-weight: 700; white-space: nowrap; }
+.confluence-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 14px; font-size: 14px; line-height: 1.65; color: var(--text); }
+.confluence-label { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-family: var(--mono); }
 </style>
 </head>
 <body>
@@ -211,6 +264,7 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
   </div>
   <nav class="nav">
     <button class="nav-btn active" id="nb-analyze" onclick="switchView('analyze')">Analyze</button>
+    <button class="nav-btn" id="nb-macro" onclick="switchView('macro')">Macro Dashboard</button>
     <button class="nav-btn" id="nb-kb" onclick="switchView('kb')">Knowledge Base</button>
   </nav>
 </header>
@@ -329,6 +383,26 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
       </div>
     </div>
 
+
+    <!-- FRAMEWORK SCORES -->
+    <div class="card" id="framework-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(139,92,246,0.13)">🧠</div>
+        <span class="card-title">FRAMEWORK ALIGNMENT SCORES</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">SCORED AGAINST 5-VIDEO CORPUS</span>
+      </div>
+      <div class="card-body">
+        <div class="framework-grid" id="framework-grid"></div>
+        <div id="framework-alignment-wrap" style="margin-top:16px;display:none">
+          <div class="confluence-label">Framework Alignment Analysis</div>
+          <div class="confluence-box" id="framework-alignment"></div>
+        </div>
+        <div id="corpus-confluence-wrap" style="margin-top:12px;display:none">
+          <div class="confluence-label">Corpus Confluence</div>
+          <div class="confluence-box" id="corpus-confluence"></div>
+        </div>
+      </div>
+    </div>
     <!-- CLAIM CLASSIFIER -->
     <div class="card" id="claims-card" style="display:none">
       <div class="card-header">
@@ -441,6 +515,61 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
   <div id="kb-list-wrap"></div>
 </div>
 
+
+<!-- MACRO DASHBOARD VIEW -->
+<div class="view" id="view-macro">
+  <div class="hero">
+    <div class="hero-eyebrow">Live Market Intelligence</div>
+    <h1>Macro <span class="accent">Dashboard</span></h1>
+    <p>Real-time macro indicators from FRED and market data — analyzed through your Signal.AI framework.</p>
+  </div>
+
+  <!-- REGIME DETECTOR -->
+  <div class="regime-card" id="regime-card">
+    <div class="regime-title">
+      <span class="loading-indicator" id="regime-loader"></span>
+      CURRENT MACRO REGIME
+      <span style="margin-left:auto;font-size:11px;color:var(--muted)" class="last-updated" id="last-updated">Loading...</span>
+      <button class="refresh-btn" onclick="loadMacroData()">↻ Refresh</button>
+    </div>
+    <div class="regime-name" id="regime-name">Analyzing...</div>
+    <div class="regime-desc" id="regime-desc">Loading macro indicators...</div>
+    <div class="regime-indicators" id="regime-pills"></div>
+  </div>
+
+  <!-- KEY MACRO INDICATORS -->
+  <div class="macro-section-title">Federal Reserve Economic Data (FRED)</div>
+  <div class="macro-grid" id="macro-grid">
+    <div class="macro-card neutral">
+      <div class="macro-label">Loading...</div>
+      <div class="macro-value" style="color:var(--muted);font-size:20px">Fetching data</div>
+    </div>
+  </div>
+
+  <!-- MARKET WATCHLIST -->
+  <div class="macro-section-title">Asset Watchlist</div>
+  <div class="watchlist-grid" id="watchlist-grid">
+    <div class="watch-card">
+      <div class="watch-ticker" style="color:var(--muted)">Loading...</div>
+      <div class="watch-name">Fetching prices</div>
+    </div>
+  </div>
+
+  <!-- SIGNAL SUMMARY -->
+  <div class="card" id="signal-summary-card" style="display:none">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(0,212,170,0.13)">📡</div>
+      <span class="card-title">MACRO SIGNAL SUMMARY</span>
+    </div>
+    <div class="card-body" id="signal-summary-body"></div>
+  </div>
+
+  <!-- FRED ATTRIBUTION -->
+  <div style="text-align:center;padding:20px 0;font-size:11px;color:var(--muted)">
+    Macro data sourced from <a href="https://fred.stlouisfed.org" target="_blank" style="color:var(--accent)">Federal Reserve Bank of St. Louis (FRED)</a> · 
+    Market data from Yahoo Finance · Updated on refresh
+  </div>
+</div>
 </main>
 
 <script>
@@ -449,52 +578,114 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
 // ═══════════════════════════════════════════
 const GEMINI_MODEL = 'gemini-2.5-flash';
 
-const SYSTEM_PROMPT = `You are a quantitative financial analyst. Analyze the video transcript below and return a single valid JSON object. 
+const SYSTEM_PROMPT = `You are a quantitative financial analyst with deep expertise in macro economics, monetary systems, and investment frameworks. You have been trained on the following five core analytical frameworks extracted from leading financial analysts:
 
-CRITICAL RULES:
-- Return ONLY the JSON object. Nothing before it. Nothing after it.
-- No markdown. No backticks. No code fences. No explanations.
-- All string values must use double quotes only, never single quotes.
-- No trailing commas anywhere.
-- If a field has no data, use an empty array [].
+FRAMEWORK 1 — MAINSTREAM ECONOMICS IS BROKEN (Jeff Snider / Eurodollar University)
+- The Federal Reserve has operated with incorrect definitions of money for 50+ years
+- Traditional indicators (CPI, GDP, payrolls, M1/M2/M3) are misleading or obsolete
+- The real information lives in yield curves, TIPS curves, and eurodollar markets
+- The Fed targeting the federal funds rate destroyed valuable market information
+- Anyone relying solely on mainstream macro indicators is looking the wrong way
+- Score any video on how deeply it understands real monetary mechanics vs surface indicators
 
-JSON structure to return:
+FRAMEWORK 2 — STATE CHANGE / CRISIS BEHAVIOR (Eurodollar University)
+- Financial crises are NOT caused by the size of losses — they are caused by behavioral STATE CHANGES
+- Private credit is following a one-way highway toward bust (2026 projected)
+- The 2008 crisis template: subprime losses were not the cause, behavioral shifts were
+- Watch for: accumulation of behavioral changes, recalibration of expectations, esoteric signals
+- Oil shocks and banking crises are state change triggers
+- Score any video on whether it identifies state changes vs just surface level problems
+
+FRAMEWORK 3 — SAVE CURRENCY VS SAVE BOND MARKET (Luke Gromen / FFTT)
+- The US faces an unavoidable binary policy choice: save the currency OR save the bond market
+- Saving bonds = print money = destroys currency = gold and hard assets win
+- Saving currency = let rates rise = bond market collapses = deficit explodes = still prints eventually
+- The adjusted Warren Buffett metric (equity market cap minus federal debt divided by GDP) is the superior valuation tool
+- Market breadth deterioration at new highs = extreme fragility signal
+- 10Y Treasury yields above 5% with 120%+ debt to GDP = debt spiral
+- Either policy path leads to gold and Bitcoin outperforming
+- Score any video on whether it understands this binary dilemma
+
+FRAMEWORK 4 — GOLD REVALUATION / DOLLAR DEBASEMENT (Luke Gromen)
+- US holds 261 million ounces of gold — every $4,000/oz revaluation = $1 trillion into Treasury General Account
+- Gold revaluation is money printing using gold — inflationary but necessary
+- Oil inflation is IMPOSSIBLE at 125% debt to GDP unlike 1970s when debt was 25-30% of GDP
+- Gold is the ONLY central bank asset that can be inflated without breaking the system
+- Bitcoin is the individual's equivalent of gold revaluation — neutral, permissionless, portable
+- Dollar down 80% vs gold since Q3 2022 is the key signal already in motion
+- Score any video on its understanding of the gold revaluation mechanism and dollar debasement thesis
+
+FRAMEWORK 5 — HYPER-FINANCIALIZATION (Quant-3)
+- Wall Street is NOT capitalism — financial markets are not the same as free markets
+- Capital is productive capacity, not money or equity shares
+- Hyper-financialization detaches finance from productive enterprise turning markets into a casino
+- True wealth comes from productive competition and innovation
+- Big business using size to block competition = crony capitalism = systemic rot
+- The system is broken at the ROOT not just the symptoms
+- Score any video on whether it diagnoses root causes vs symptoms
+
+CURRENT CORPUS CONSENSUS (from 5 analyzed videos):
+- Inflation: 4/5 videos flagged — HIGHEST CONVICTION SIGNAL
+- Monetary Policy breakdown: 3/5 videos — HIGH CONVICTION
+- Stagflation risk: 2/5 videos — ELEVATED
+- Geopolitical risk: 2/5 videos — ELEVATED  
+- Average Contrarian Score: 84/100 — corpus is strongly anti-consensus
+- Average Conviction Score: 90/100 — analysts speak with high certainty
+- Most mentioned asset: Bitcoin (3/5 videos), Gold (2/5 videos)
+- Primary hard assets thesis: CONFIRMED across multiple frameworks
+
+ANALYSIS INSTRUCTIONS:
+Analyze the video transcript and return ONLY a valid JSON object with NO markdown, NO backticks, NO text before or after.
+
+Return this exact JSON structure:
 {
   "title": "string",
-  "summary": "string",
-  "sentimentLabel": "Bullish",
+  "summary": "string — 2-3 sentences",
+  "sentimentLabel": "Bullish|Bearish|Neutral|Mixed",
   "sentimentScore": 50,
   "convictionScore": 50,
   "dataDensityScore": 50,
   "contrarianScore": 50,
-  "timeHorizon": "Mixed",
+  "timeHorizon": "Short-term|Medium-term|Long-term|Mixed",
   "timeHorizonMonths": 12,
-  "riskLevel": "Medium",
+  "riskLevel": "Low|Medium|High",
   "riskScore": 50,
+  "frameworkScores": {
+    "mainstreamEconomicsBroken": 50,
+    "stateChangeFramework": 50,
+    "saveCurrencyVsBonds": 50,
+    "goldRevaluation": 50,
+    "hyperFinancialization": 50
+  },
+  "frameworkAlignment": "string — which frameworks does this video confirm or contradict and how",
+  "corpusConfluence": "string — how does this video align with or diverge from the 5-video corpus consensus",
   "assetClasses": ["Equities"],
   "tickers": ["BTC"],
   "macroThemes": ["Inflation"],
   "dataPoints": [{"label": "string", "value": "string"}],
-  "claims": [{"type": "FACT", "text": "string", "confidence": 90}],
+  "claims": [{"type": "FACT|OPINION|PREDICTION|WARNING", "text": "string", "confidence": 90}],
   "bullCase": ["string"],
   "bearCase": ["string"],
-  "catalysts": [{"name": "string", "description": "string", "horizon": "Short-term", "icon": "📈", "urgency": 75}],
-  "entities": [{"name": "string", "type": "PERSON", "role": "string"}],
+  "catalysts": [{"name": "string", "description": "string", "horizon": "Short-term|Medium-term|Long-term", "icon": "📈", "urgency": 75}],
+  "entities": [{"name": "string", "type": "PERSON|INSTITUTION|COUNTRY|COMPANY", "role": "string"}],
   "contrarianFlags": ["string"],
   "actionItems": ["string"],
   "keyInsights": ["string"]
 }
 
-Scoring guide:
-- sentimentLabel: Bullish, Bearish, Neutral, or Mixed
-- sentimentScore: 0=extremely bearish, 50=neutral, 100=extremely bullish
-- convictionScore: 0=very uncertain speaker, 100=very confident speaker
-- dataDensityScore: 0=all opinion, 100=all hard data and numbers
-- contrarianScore: 0=mainstream consensus, 100=strongly contrarian
-- claims type must be exactly one of: FACT, OPINION, PREDICTION, WARNING
-- entities type must be exactly one of: PERSON, INSTITUTION, COUNTRY, COMPANY
+Framework scoring guide (0-100):
+- 0-30: Video shows no awareness or contradicts this framework
+- 31-60: Video partially touches on this framework
+- 61-80: Video clearly demonstrates understanding of this framework
+- 81-100: Video deeply confirms and extends this framework with new data
 
-Extract real numbers and statistics when mentioned. Return ONLY the JSON object with no other text.`;
+General scoring:
+- sentimentScore: 0=extremely bearish, 50=neutral, 100=extremely bullish
+- convictionScore: 0=very uncertain speaker, 100=extremely confident speaker
+- dataDensityScore: 0=all opinion no data, 100=all hard data and numbers
+- contrarianScore: 0=mainstream consensus view, 100=strongly against consensus
+
+Extract ALL real numbers, percentages, dates and statistics mentioned. Use [] for empty arrays. Return ONLY the JSON object.`;
 
 async function callGemini(prompt, systemInstruction) {
   const key = getApiKey();
@@ -718,6 +909,44 @@ function renderResults(r) {
   if (r.tickers?.length) { document.getElementById('ticker-chips').innerHTML=r.tickers.map(t=>chip(t,'#00D4AA')).join(''); document.getElementById('tickers-wrap').style.display='block'; } else { document.getElementById('tickers-wrap').style.display='none'; }
   if (r.macroThemes?.length) { document.getElementById('macro-chips').innerHTML=r.macroThemes.map(m=>chip(m,'#64748B')).join(''); document.getElementById('macro-wrap').style.display='block'; } else { document.getElementById('macro-wrap').style.display='none'; }
 
+  // FRAMEWORK SCORES
+  if (r.frameworkScores) {
+    const frameworks = [
+      { key:'mainstreamEconomicsBroken', name:'Mainstream Economics Is Broken', color:'#0099FF' },
+      { key:'stateChangeFramework', name:'State Change / Crisis Behavior', color:'#EF4444' },
+      { key:'saveCurrencyVsBonds', name:'Save Currency vs Save Bond Market', color:'#F59E0B' },
+      { key:'goldRevaluation', name:'Gold Revaluation / Dollar Debasement', color:'#F59E0B' },
+      { key:'hyperFinancialization', name:'Hyper-Financialization Awareness', color:'#8B5CF6' },
+    ];
+    const fg = document.getElementById('framework-grid');
+    fg.innerHTML = frameworks.map(f => {
+      const score = r.frameworkScores[f.key] || 0;
+      const label = score >= 81 ? 'DEEP' : score >= 61 ? 'CLEAR' : score >= 31 ? 'PARTIAL' : 'WEAK';
+      const labelBg = score >= 81 ? `rgba(0,212,170,0.15)` : score >= 61 ? `rgba(0,153,255,0.15)` : score >= 31 ? `rgba(245,158,11,0.15)` : `rgba(100,116,139,0.15)`;
+      const labelColor = score >= 81 ? 'var(--accent)' : score >= 61 ? 'var(--accent2)' : score >= 31 ? 'var(--warn)' : 'var(--muted)';
+      return `<div class="framework-row">
+        <div class="framework-name">${f.name}</div>
+        <div class="framework-bar-wrap"><div class="framework-bar" style="width:0%;background:${f.color}" data-target="${score}"></div></div>
+        <div class="framework-score" style="color:${f.color}">${score}</div>
+        <span class="framework-label" style="background:${labelBg};color:${labelColor}">${label}</span>
+      </div>`;
+    }).join('');
+    document.getElementById('framework-card').style.display = 'block';
+    setTimeout(() => {
+      document.querySelectorAll('.framework-bar').forEach(el => {
+        el.style.width = el.getAttribute('data-target') + '%';
+      });
+    }, 200);
+    if (r.frameworkAlignment) {
+      document.getElementById('framework-alignment').textContent = r.frameworkAlignment;
+      document.getElementById('framework-alignment-wrap').style.display = 'block';
+    }
+    if (r.corpusConfluence) {
+      document.getElementById('corpus-confluence').textContent = r.corpusConfluence;
+      document.getElementById('corpus-confluence-wrap').style.display = 'block';
+    }
+  } else { document.getElementById('framework-card').style.display = 'none'; }
+
   if (r.claims?.length) {
     document.getElementById('claims-tbody').innerHTML = r.claims.map(c=>`<tr><td><span class="claim-type" style="background:${claimColor(c.type)}22;color:${claimColor(c.type)}">${c.type}</span></td><td>${c.text}</td><td><span style="font-family:var(--mono);font-size:13px;color:${c.confidence>75?'var(--green)':c.confidence>50?'var(--warn)':'var(--red)'};font-weight:700">${c.confidence}%</span></td></tr>`).join('');
     document.getElementById('claims-card').style.display='block';
@@ -768,7 +997,20 @@ function saveKB() { try { localStorage.setItem('signalai_v3', JSON.stringify(sav
 
 function saveEntry() {
   if (!currentResult) return;
-  savedEntries.unshift({ id:Date.now(), date:new Date().toLocaleDateString(), title:currentResult.title, sentiment:currentResult.sentimentLabel, sentimentScore:currentResult.sentimentScore, riskLevel:currentResult.riskLevel, tickers:currentResult.tickers||[], macroThemes:currentResult.macroThemes||[], assetClasses:currentResult.assetClasses||[], result:currentResult, transcript:currentTranscript });
+  savedEntries.unshift({
+    id: Date.now(),
+    date: new Date().toLocaleDateString(),
+    title: currentResult.title,
+    sentiment: currentResult.sentimentLabel,
+    sentimentScore: currentResult.sentimentScore,
+    riskLevel: currentResult.riskLevel,
+    tickers: currentResult.tickers || [],
+    macroThemes: currentResult.macroThemes || [],
+    assetClasses: currentResult.assetClasses || [],
+    frameworkScores: currentResult.frameworkScores || {},
+    result: currentResult,
+    transcript: currentTranscript
+  });
   saveKB();
   alert('✅ Saved to Knowledge Base!');
 }
@@ -782,7 +1024,43 @@ function renderKB() {
   const tc={};allTickers.forEach(t=>{tc[t]=(tc[t]||0)+1;});
   const topT=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const avgS=savedEntries.length?Math.round(savedEntries.reduce((a,e)=>a+(e.sentimentScore||50),0)/savedEntries.length):0;
-  document.getElementById('kb-stats-row').innerHTML=`<div class="kb-stat"><div class="kb-stat-label">Saved</div><div class="kb-stat-val">${savedEntries.length}</div></div><div class="kb-stat"><div class="kb-stat-label">Avg Sentiment</div><div class="kb-stat-val">${avgS}</div><div class="kb-stat-sub">out of 100</div></div><div class="kb-stat"><div class="kb-stat-label">Unique Tickers</div><div class="kb-stat-val">${Object.keys(tc).length}</div></div><div class="kb-stat"><div class="kb-stat-label">Top Ticker</div><div class="kb-stat-val" style="font-size:16px">${topT[0]?topT[0][0]:'—'}</div><div class="kb-stat-sub">${topT[0]?topT[0][1]+' mentions':''}</div></div>`;
+  // Framework averages
+  const fwKeys = ['mainstreamEconomicsBroken','stateChangeFramework','saveCurrencyVsBonds','goldRevaluation','hyperFinancialization'];
+  const fwNames = ['Mainstream Broken','State Change','Save Currency','Gold Reval','Financialization'];
+  const fwAvgs = fwKeys.map(k => {
+    const vals = savedEntries.filter(e => e.frameworkScores?.[k]).map(e => e.frameworkScores[k]);
+    return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+  });
+  const topFw = fwAvgs.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+
+  document.getElementById('kb-stats-row').innerHTML=`
+    <div class="kb-stat"><div class="kb-stat-label">Saved</div><div class="kb-stat-val">${savedEntries.length}</div></div>
+    <div class="kb-stat"><div class="kb-stat-label">Avg Sentiment</div><div class="kb-stat-val">${avgS}</div><div class="kb-stat-sub">out of 100</div></div>
+    <div class="kb-stat"><div class="kb-stat-label">Avg Conviction</div><div class="kb-stat-val">${Math.round(savedEntries.reduce((a,e)=>a+(e.result?.convictionScore||0),0)/Math.max(savedEntries.length,1))}</div><div class="kb-stat-sub">out of 100</div></div>
+    <div class="kb-stat"><div class="kb-stat-label">Avg Contrarian</div><div class="kb-stat-val">${Math.round(savedEntries.reduce((a,e)=>a+(e.result?.contrarianScore||0),0)/Math.max(savedEntries.length,1))}</div><div class="kb-stat-sub">out of 100</div></div>
+    <div class="kb-stat"><div class="kb-stat-label">Unique Tickers</div><div class="kb-stat-val">${Object.keys(tc).length}</div></div>
+    <div class="kb-stat"><div class="kb-stat-label">Top Framework</div><div class="kb-stat-val" style="font-size:14px">${fwAvgs[topFw]}</div><div class="kb-stat-sub">${fwNames[topFw]}</div></div>
+  `;
+
+  // Framework score summary
+  if (savedEntries.length >= 2) {
+    const fwHtml = fwKeys.map((k,i) => {
+      const avg = fwAvgs[i];
+      const color = avg >= 80 ? 'var(--accent)' : avg >= 60 ? 'var(--accent2)' : avg >= 40 ? 'var(--warn)' : 'var(--muted)';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(30,45,69,0.5)">
+        <div style="font-size:12px;font-weight:600;flex:1">${fwNames[i]}</div>
+        <div style="width:120px;height:6px;background:var(--surface3);border-radius:99px;overflow:hidden">
+          <div style="width:${avg}%;height:100%;background:${color};border-radius:99px"></div>
+        </div>
+        <div style="font-size:13px;font-weight:800;font-family:var(--mono);color:${color};min-width:30px;text-align:right">${avg}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('kb-patterns').innerHTML = `
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Average framework scores across all ${savedEntries.length} saved videos:</p>
+      ${fwHtml}
+      ${pats.length ? '<div style="margin-top:16px"><p style="font-size:12px;color:var(--muted);margin-bottom:8px">Recurring macro themes:</p><div class="pattern-list">' + pats.map(p=>`<span class="pattern-tag">${p}</span>`).join('') + '</div></div>' : ''}
+    `;
+    document.getElementById('kb-patterns-wrap').style.display='block';
   if (savedEntries.length>=2) {
     const allThemes=savedEntries.flatMap(e=>e.macroThemes||[]);const thC={};allThemes.forEach(t=>{thC[t]=(thC[t]||0)+1;});
     const topTh=Object.entries(thC).sort((a,b)=>b[1]-a[1]).slice(0,6);
@@ -843,6 +1121,229 @@ function importKB(e) {
     } catch{alert('Could not read file.');}
   };
   r.readAsText(file);
+}
+
+
+// ═══════════════════════════════════════════
+// MACRO DASHBOARD
+// ═══════════════════════════════════════════
+
+const FRED_API_KEY = 'a0f94e8d73e77f71a4e1b1d7c09dc24f'; // Public demo key
+const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
+
+// Key FRED series to monitor
+const FRED_SERIES = [
+  { id:'DGS10', name:'10Y Treasury Yield', unit:'%', desc:'Long-term interest rate benchmark', signal: v => v > 5 ? 'DANGER' : v > 4 ? 'ELEVATED' : v < 2 ? 'LOW' : 'NORMAL', signalBull: v => v < 3.5 },
+  { id:'DGS2', name:'2Y Treasury Yield', unit:'%', desc:'Short-term rate, Fed policy indicator', signal: v => v > 5 ? 'ELEVATED' : 'NORMAL', signalBull: v => v < 3 },
+  { id:'T10YIE', name:'10Y Inflation Expectation', unit:'%', desc:'Market implied inflation over 10 years', signal: v => v > 3 ? 'HIGH' : v > 2.5 ? 'ELEVATED' : 'NORMAL', signalBull: v => v < 2.5 },
+  { id:'DTWEXBGS', name:'Dollar Index (DXY)', unit:'', desc:'Broad trade-weighted dollar strength', signal: v => v > 115 ? 'VERY STRONG' : v > 105 ? 'STRONG' : v < 95 ? 'WEAK' : 'NEUTRAL', signalBull: v => v < 100 },
+  { id:'GOLDAMGBD228NLBM', name:'Gold Price', unit:'$', desc:'London gold fix, USD per troy ounce', signal: v => v > 2500 ? 'BREAKOUT' : v > 2000 ? 'ELEVATED' : 'NORMAL', signalBull: v => v > 2000 },
+  { id:'BAMLH0A0HYM2', name:'HY Credit Spread', unit:'%', desc:'High yield spread — risk appetite gauge', signal: v => v > 6 ? 'STRESS' : v > 4 ? 'CAUTION' : 'NORMAL', signalBull: v => v < 4 },
+  { id:'T10Y2Y', name:'Yield Curve (10Y-2Y)', unit:'%', desc:'Positive = normal, Negative = inverted (recession signal)', signal: v => v < -0.5 ? 'INVERTED' : v < 0 ? 'FLAT' : v > 1 ? 'STEEP' : 'NORMAL', signalBull: v => v > 0 },
+  { id:'CPIAUCSL', name:'CPI Inflation', unit:'%', desc:'Consumer Price Index year over year', signal: v => v > 5 ? 'HIGH' : v > 3 ? 'ELEVATED' : 'NORMAL', signalBull: v => v < 3 },
+  { id:'UNRATE', name:'Unemployment Rate', unit:'%', desc:'US civilian unemployment rate', signal: v => v > 5 ? 'RISING' : v < 4 ? 'TIGHT' : 'NORMAL', signalBull: v => v < 4.5 },
+  { id:'M2SL', name:'M2 Money Supply', unit:'$T', desc:'Broad money supply in trillions — liquidity gauge', signal: v => 'TRACKING', signalBull: v => true },
+  { id:'WALCL', name:'Fed Balance Sheet', unit:'$T', desc:'Federal Reserve total assets — QE/QT gauge', signal: v => v > 8 ? 'EXPANDED' : 'NORMAL', signalBull: v => v > 7 },
+  { id:'VIXCLS', name:'VIX Volatility', unit:'', desc:'Fear index — market stress gauge', signal: v => v > 30 ? 'HIGH FEAR' : v > 20 ? 'ELEVATED' : 'CALM', signalBull: v => v < 20 },
+];
+
+const WATCHLIST = [
+  { ticker:'GC=F', name:'Gold', symbol:'GLD', color:'#F59E0B' },
+  { ticker:'BTC-USD', name:'Bitcoin', symbol:'BTC', color:'#F97316' },
+  { ticker:'SPY', name:'S&P 500 ETF', symbol:'SPY', color:'#00D4AA' },
+  { ticker:'GDX', name:'Gold Miners ETF', symbol:'GDX', color:'#10B981' },
+  { ticker:'TLT', name:'20Y Treasury ETF', symbol:'TLT', color:'#0099FF' },
+  { ticker:'DX-Y.NYB', name:'US Dollar Index', symbol:'DXY', color:'#8B5CF6' },
+  { ticker:'CL=F', name:'Crude Oil', symbol:'OIL', color:'#EF4444' },
+  { ticker:'SLV', name:'Silver ETF', symbol:'SLV', color:'#94A3B8' },
+];
+
+let macroData = {};
+let macroLoaded = false;
+
+async function loadMacroData() {
+  document.getElementById('regime-loader').style.display = 'inline-block';
+  document.getElementById('last-updated').textContent = 'Refreshing...';
+
+  // Load FRED data
+  const results = {};
+  const promises = FRED_SERIES.map(async (series) => {
+    try {
+      const url = `${FRED_BASE}?series_id=${series.id}&api_key=${FRED_API_KEY}&file_type=json&limit=2&sort_order=desc`;
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('FRED error');
+      const data = await resp.json();
+      const obs = data.observations?.filter(o => o.value !== '.') || [];
+      if (obs.length > 0) {
+        const current = parseFloat(obs[0].value);
+        const previous = obs.length > 1 ? parseFloat(obs[1].value) : current;
+        results[series.id] = { current, previous, date: obs[0].date };
+      }
+    } catch(e) {
+      results[series.id] = null;
+    }
+  });
+
+  await Promise.allSettled(promises);
+  macroData = results;
+
+  renderMacroGrid();
+  renderRegime();
+  await loadWatchlist();
+
+  document.getElementById('regime-loader').style.display = 'none';
+  document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  macroLoaded = true;
+}
+
+function renderMacroGrid() {
+  const grid = document.getElementById('macro-grid');
+  grid.innerHTML = '';
+
+  FRED_SERIES.forEach(series => {
+    const data = macroData[series.id];
+    if (!data) return;
+
+    const { current, previous } = data;
+    const change = current - previous;
+    const changeStr = (change >= 0 ? '+' : '') + change.toFixed(2);
+    const isBull = series.signalBull(current);
+    const sig = series.signal(current);
+
+    // Format value
+    let displayVal = current.toFixed(2);
+    if (series.unit === '$T') displayVal = '$' + (current/1000).toFixed(1) + 'T';
+    else if (series.unit === '$') displayVal = '$' + Math.round(current).toLocaleString();
+
+    const cardClass = sig === 'DANGER' || sig === 'HIGH FEAR' || sig === 'INVERTED' || sig === 'STRESS' ? 'negative' :
+                      sig === 'ELEVATED' || sig === 'CAUTION' || sig === 'FLAT' ? 'warning' :
+                      isBull ? 'positive' : 'neutral';
+
+    const valColor = isBull ? 'var(--green)' : sig === 'DANGER' || sig === 'INVERTED' ? 'var(--red)' : 'var(--warn)';
+    const changeColor = change >= 0 ? 'var(--green)' : 'var(--red)';
+    const sigBg = cardClass === 'negative' ? 'rgba(239,68,68,0.12)' : cardClass === 'warning' ? 'rgba(245,158,11,0.12)' : cardClass === 'positive' ? 'rgba(0,212,170,0.12)' : 'rgba(100,116,139,0.12)';
+    const sigColor = cardClass === 'negative' ? 'var(--red)' : cardClass === 'warning' ? 'var(--warn)' : cardClass === 'positive' ? 'var(--accent)' : 'var(--muted)';
+
+    grid.innerHTML += `
+      <div class="macro-card ${cardClass}">
+        <div class="macro-label">
+          <span>${series.name}</span>
+          <span style="font-family:var(--mono)">${series.unit}</span>
+        </div>
+        <div class="macro-value" style="color:${valColor}">${series.unit === '$' || series.unit === '$T' ? '' : ''}${displayVal}${series.unit !== '$' && series.unit !== '$T' ? series.unit : ''}</div>
+        <div class="macro-change" style="color:${changeColor}">
+          ${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)} vs prior
+        </div>
+        <div class="macro-signal" style="background:${sigBg};color:${sigColor}">${sig}</div>
+        <div class="macro-desc">${series.desc}</div>
+        <div class="fred-source">FRED · ${macroData[series.id]?.date || ''}</div>
+      </div>`;
+  });
+}
+
+function renderRegime() {
+  // Determine regime from indicators
+  const d = macroData;
+  let scores = { inflationary: 0, stagflationary: 0, riskOn: 0, deflationary: 0 };
+
+  if (d['CPIAUCSL']?.current > 3) { scores.inflationary += 2; scores.stagflationary += 1; }
+  if (d['T10YIE']?.current > 2.5) { scores.inflationary += 1; scores.stagflationary += 1; }
+  if (d['T10Y2Y']?.current < 0) { scores.stagflationary += 2; scores.deflationary += 1; }
+  if (d['BAMLH0A0HYM2']?.current > 5) { scores.stagflationary += 2; scores.deflationary += 2; }
+  if (d['VIXCLS']?.current > 25) { scores.deflationary += 1; scores.stagflationary += 1; }
+  if (d['VIXCLS']?.current < 18) { scores.riskOn += 2; }
+  if (d['T10Y2Y']?.current > 0.5) { scores.riskOn += 1; }
+  if (d['BAMLH0A0HYM2']?.current < 4) { scores.riskOn += 2; }
+  if (d['GOLDAMGBD228NLBM']?.current > 2500) { scores.inflationary += 1; scores.stagflationary += 1; }
+
+  const regime = Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+
+  const regimes = {
+    riskOn: { name: 'Risk On', color: 'var(--green)', desc: 'Growth accelerating, liquidity expanding. Historically favorable for equities, crypto, and risk assets. Credit spreads tight, volatility low.', pills: ['📈 Buy Equities','₿ Buy Crypto','🏭 Growth Assets','💵 Reduce Cash'] },
+    inflationary: { name: 'Inflationary', color: 'var(--warn)', desc: 'Inflation elevated, growth still positive. Hard assets outperform. Gold, commodities, energy, real estate benefit. Avoid long-duration bonds.', pills: ['🥇 Buy Gold','⛽ Buy Energy','🏠 Real Assets','🚫 Avoid Long Bonds'] },
+    stagflationary: { name: 'Stagflationary', color: 'var(--red)', desc: 'Growth slowing AND inflation rising — worst combination for markets. Gold miners, cash, and short bonds are key. This is Luke Gromen's primary warning scenario.', pills: ['🥇 Gold Miners','💵 Hold Cash','📉 Short Bonds','⚠️ Reduce Equities'] },
+    deflationary: { name: 'Deflationary / Risk Off', color: '#0099FF', desc: 'Growth collapsing, deflation risk rising. Cash and long bonds outperform. Gold also performs well as a safe haven. Reduce all risk assets.', pills: ['💵 Max Cash','📊 Long Bonds','🥇 Gold','🚫 Avoid Risk'] }
+  };
+
+  const r = regimes[regime];
+  document.getElementById('regime-name').textContent = r.name;
+  document.getElementById('regime-name').style.color = r.color;
+  document.getElementById('regime-desc').textContent = r.desc;
+  document.getElementById('regime-pills').innerHTML = r.pills.map(p =>
+    `<span class="regime-pill" style="background:${r.color}22;color:${r.color};border:1px solid ${r.color}44">${p}</span>`
+  ).join('');
+
+  // Signal summary
+  const bullSignals = FRED_SERIES.filter(s => macroData[s.id] && s.signalBull(macroData[s.id].current));
+  const bearSignals = FRED_SERIES.filter(s => macroData[s.id] && !s.signalBull(macroData[s.id].current));
+
+  document.getElementById('signal-summary-body').innerHTML = `
+    <div class="two-col">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:10px">🟢 BULLISH SIGNALS (${bullSignals.length})</div>
+        ${bullSignals.map(s => `<div class="indicator-row">
+          <div><div class="indicator-name">${s.name}</div><div class="indicator-sub">${s.desc}</div></div>
+          <div><div class="indicator-val" style="color:var(--green)">${macroData[s.id]?.current?.toFixed(2)}${s.unit !== '$' && s.unit !== '$T' ? s.unit : ''}</div></div>
+        </div>`).join('')}
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:10px">🔴 BEARISH SIGNALS (${bearSignals.length})</div>
+        ${bearSignals.map(s => `<div class="indicator-row">
+          <div><div class="indicator-name">${s.name}</div><div class="indicator-sub">${s.desc}</div></div>
+          <div><div class="indicator-val" style="color:var(--red)">${macroData[s.id]?.current?.toFixed(2)}${s.unit !== '$' && s.unit !== '$T' ? s.unit : ''}</div></div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  document.getElementById('signal-summary-card').style.display = 'block';
+}
+
+async function loadWatchlist() {
+  const grid = document.getElementById('watchlist-grid');
+  grid.innerHTML = '';
+
+  const promises = WATCHLIST.map(async (asset) => {
+    try {
+      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${asset.ticker}?interval=1d&range=2d`;
+      const resp = await fetch(url);
+      const data = await resp.json();
+      const result = data.chart?.result?.[0];
+      if (!result) throw new Error('No data');
+      const closes = result.indicators?.quote?.[0]?.close || [];
+      const current = closes[closes.length - 1];
+      const previous = closes[closes.length - 2] || current;
+      const change = ((current - previous) / previous * 100);
+      const changeColor = change >= 0 ? 'var(--green)' : 'var(--red)';
+
+      grid.innerHTML += `
+        <div class="watch-card">
+          <div class="watch-ticker" style="color:${asset.color}">${asset.symbol}</div>
+          <div class="watch-name">${asset.name}</div>
+          <div class="watch-price">$${current?.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+          <div class="watch-change" style="color:${changeColor}">${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}%</div>
+        </div>`;
+    } catch(e) {
+      grid.innerHTML += `
+        <div class="watch-card">
+          <div class="watch-ticker" style="color:${asset.color}">${asset.symbol}</div>
+          <div class="watch-name">${asset.name}</div>
+          <div class="watch-price" style="color:var(--muted);font-size:14px">Enable CORS</div>
+          <div class="watch-change" style="color:var(--muted);font-size:11px">Open in browser</div>
+        </div>`;
+    }
+  });
+
+  await Promise.allSettled(promises);
+}
+
+// Auto load when switching to macro view
+const origSwitchView = switchView;
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.getElementById('nb-' + v).classList.add('active');
+  if (v === 'kb') renderKB();
+  if (v === 'macro' && !macroLoaded) loadMacroData();
 }
 
 // ═══════════════════════════════════════════
