@@ -1143,7 +1143,7 @@ function importKB(e) {
 // MACRO DASHBOARD
 // ═══════════════════════════════════════════
 
-const FRED_API_KEY = 'a0f94e8d73e77f71a4e1b1d7c09dc24f'; // Public demo key
+const FRED_API_KEY = '433b9b2655049092c5c5a7467f7626cc'; // Personal FRED key
 const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
 
 // Key FRED series to monitor
@@ -1185,10 +1185,12 @@ async function loadMacroData() {
   const promises = FRED_SERIES.map(async (series) => {
     try {
       const fredUrl = `${FRED_BASE}?series_id=${series.id}&api_key=${FRED_API_KEY}&file_type=json&limit=2&sort_order=desc`;
-      const url = `https://corsproxy.io/?${encodeURIComponent(fredUrl)}`;
+      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(fredUrl)}`;
       const resp = await fetch(url);
       if (!resp.ok) throw new Error('FRED error');
-      const data = await resp.json();
+      const rawData = await resp.json();
+      // Handle allorigins wrapper
+      const data = rawData.contents ? JSON.parse(rawData.contents) : rawData;
       const obs = data.observations?.filter(o => o.value !== '.') || [];
       if (obs.length > 0) {
         const current = parseFloat(obs[0].value);
