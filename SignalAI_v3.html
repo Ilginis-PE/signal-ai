@@ -763,6 +763,7 @@ function switchView(v) {
   document.getElementById('view-' + v).classList.add('active');
   document.getElementById('nb-' + v).classList.add('active');
   if (v === 'kb') renderKB();
+  if (v === 'macro' && !macroLoaded) loadMacroData();
 }
 function switchTab(t) {
   activeTab = t;
@@ -1275,7 +1276,7 @@ function renderRegime() {
   const regimes = {
     riskOn: { name: 'Risk On', color: 'var(--green)', desc: 'Growth accelerating, liquidity expanding. Historically favorable for equities, crypto, and risk assets. Credit spreads tight, volatility low.', pills: ['📈 Buy Equities','₿ Buy Crypto','🏭 Growth Assets','💵 Reduce Cash'] },
     inflationary: { name: 'Inflationary', color: 'var(--warn)', desc: 'Inflation elevated, growth still positive. Hard assets outperform. Gold, commodities, energy, real estate benefit. Avoid long-duration bonds.', pills: ['🥇 Buy Gold','⛽ Buy Energy','🏠 Real Assets','🚫 Avoid Long Bonds'] },
-    stagflationary: { name: 'Stagflationary', color: 'var(--red)', desc: 'Growth slowing AND inflation rising — worst combination for markets. Gold miners, cash, and short bonds are key. This is Luke Gromen's primary warning scenario.', pills: ['🥇 Gold Miners','💵 Hold Cash','📉 Short Bonds','⚠️ Reduce Equities'] },
+    stagflationary: { name: 'Stagflationary', color: 'var(--red)', desc: 'Growth slowing AND inflation rising — worst combination for markets. Gold miners, cash, and short bonds are key. This is Luke Gromen\u2019s primary warning scenario.', pills: ['🥇 Gold Miners','💵 Hold Cash','📉 Short Bonds','⚠️ Reduce Equities'] },
     deflationary: { name: 'Deflationary / Risk Off', color: '#0099FF', desc: 'Growth collapsing, deflation risk rising. Cash and long bonds outperform. Gold also performs well as a safe haven. Reduce all risk assets.', pills: ['💵 Max Cash','📊 Long Bonds','🥇 Gold','🚫 Avoid Risk'] }
   };
 
@@ -1349,16 +1350,8 @@ async function loadWatchlist() {
   await Promise.allSettled(promises);
 }
 
-// Auto load when switching to macro view
-const origSwitchView = switchView;
-function switchView(v) {
-  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('view-' + v).classList.add('active');
-  document.getElementById('nb-' + v).classList.add('active');
-  if (v === 'kb') renderKB();
-  if (v === 'macro' && !macroLoaded) loadMacroData();
-}
+
+// Macro auto-load handled in switchView above
 
 // ═══════════════════════════════════════════
 // INIT
