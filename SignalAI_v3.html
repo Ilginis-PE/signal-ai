@@ -1185,12 +1185,10 @@ async function loadMacroData() {
   const promises = FRED_SERIES.map(async (series) => {
     try {
       const fredUrl = `${FRED_BASE}?series_id=${series.id}&api_key=${FRED_API_KEY}&file_type=json&limit=2&sort_order=desc`;
-      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(fredUrl)}`;
+      const url = `https://thingproxy.freeboard.io/fetch/${fredUrl}`;
       const resp = await fetch(url);
       if (!resp.ok) throw new Error('FRED error');
-      const rawData = await resp.json();
-      // Handle allorigins wrapper
-      const data = rawData.contents ? JSON.parse(rawData.contents) : rawData;
+      const data = await resp.json();
       const obs = data.observations?.filter(o => o.value !== '.') || [];
       if (obs.length > 0) {
         const current = parseFloat(obs[0].value);
