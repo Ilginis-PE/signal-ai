@@ -818,7 +818,6 @@ async function analyze() {
   if (activeTab === 'url') {
     const url = document.getElementById('url-input').value.trim();
     if (!url) return showErr('Please enter a YouTube URL.');
-    // For URL mode, ask Gemini to search — but note this may not work without grounding
     content = `Please analyze this YouTube video: ${url}\n\nExtract all financial insights from the video content.`;
     currentTranscript = content;
   } else {
@@ -847,15 +846,11 @@ async function analyze() {
       renderResults(currentResult);
     } catch(e) {
       try {
-        const fixed = jsonStr
-          .replace(/,\s*}/g, '}')
-          .replace(/,\s*]/g, ']');
+        const fixed = jsonStr.replace(/,\s*}/g,'}').replace(/,\s*]/g,']');
         currentResult = JSON.parse(fixed);
         renderResults(currentResult);
       } catch(e2) {
-        // Show raw response for debugging
-        const preview = raw.slice(-300);
-        showErr('DEBUG — Raw Gemini response (first 500 chars): ' + preview);
+        showErr('Parse error — please try running again.');
       }
     }
   } catch(e) {
@@ -863,6 +858,7 @@ async function analyze() {
   }
   setLoading(false);
 }
+
 
 // ═══════════════════════════════════════════
 // RENDER
@@ -1024,14 +1020,21 @@ function renderKB() {
   const tc={};allTickers.forEach(t=>{tc[t]=(tc[t]||0)+1;});
   const topT=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const avgS=savedEntries.length?Math.round(savedEntries.reduce((a,e)=>a+(e.sentimentScore||50),0)/savedEntries.length):0;
+
+  // Compute pats first so it can be used in framework section
+  const allThemes=savedEntries.flatMap(e=>e.macroThemes||[]);
+  const thC={};allThemes.forEach(t=>{thC[t]=(thC[t]||0)+1;});
+  const topTh=Object.entries(thC).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const pats=topTh.filter(([,c])=>c>1).map(([t,c])=>`${t} (${c}x)`);
+
   // Framework averages
-  const fwKeys = ['mainstreamEconomicsBroken','stateChangeFramework','saveCurrencyVsBonds','goldRevaluation','hyperFinancialization'];
-  const fwNames = ['Mainstream Broken','State Change','Save Currency','Gold Reval','Financialization'];
-  const fwAvgs = fwKeys.map(k => {
-    const vals = savedEntries.filter(e => e.frameworkScores?.[k]).map(e => e.frameworkScores[k]);
-    return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+  const fwKeys=['mainstreamEconomicsBroken','stateChangeFramework','saveCurrencyVsBonds','goldRevaluation','hyperFinancialization'];
+  const fwNames=['Mainstream Broken','State Change','Save Currency','Gold Reval','Financialization'];
+  const fwAvgs=fwKeys.map(k=>{
+    const vals=savedEntries.filter(e=>e.frameworkScores?.[k]).map(e=>e.frameworkScores[k]);
+    return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
   });
-  const topFw = fwAvgs.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+  const topFw=fwAvgs.reduce((iMax,x,i,arr)=>x>arr[iMax]?i:iMax,0);
 
   document.getElementById('kb-stats-row').innerHTML=`
     <div class="kb-stat"><div class="kb-stat-label">Saved</div><div class="kb-stat-val">${savedEntries.length}</div></div>
@@ -1042,11 +1045,10 @@ function renderKB() {
     <div class="kb-stat"><div class="kb-stat-label">Top Framework</div><div class="kb-stat-val" style="font-size:14px">${fwAvgs[topFw]}</div><div class="kb-stat-sub">${fwNames[topFw]}</div></div>
   `;
 
-  // Framework score summary
-  if (savedEntries.length >= 2) {
-    const fwHtml = fwKeys.map((k,i) => {
-      const avg = fwAvgs[i];
-      const color = avg >= 80 ? 'var(--accent)' : avg >= 60 ? 'var(--accent2)' : avg >= 40 ? 'var(--warn)' : 'var(--muted)';
+  if (savedEntries.length>=2) {
+    const fwHtml=fwKeys.map((k,i)=>{
+      const avg=fwAvgs[i];
+      const color=avg>=80?'var(--accent)':avg>=60?'var(--accent2)':avg>=40?'var(--warn)':'var(--muted)';
       return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(30,45,69,0.5)">
         <div style="font-size:12px;font-weight:600;flex:1">${fwNames[i]}</div>
         <div style="width:120px;height:6px;background:var(--surface3);border-radius:99px;overflow:hidden">
@@ -1055,30 +1057,43 @@ function renderKB() {
         <div style="font-size:13px;font-weight:800;font-family:var(--mono);color:${color};min-width:30px;text-align:right">${avg}</div>
       </div>`;
     }).join('');
-    document.getElementById('kb-patterns').innerHTML = `
+    document.getElementById('kb-patterns').innerHTML=`
       <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Average framework scores across all ${savedEntries.length} saved videos:</p>
       ${fwHtml}
-      ${pats.length ? '<div style="margin-top:16px"><p style="font-size:12px;color:var(--muted);margin-bottom:8px">Recurring macro themes:</p><div class="pattern-list">' + pats.map(p=>`<span class="pattern-tag">${p}</span>`).join('') + '</div></div>' : ''}
+      ${pats.length?'<div style="margin-top:16px"><p style="font-size:12px;color:var(--muted);margin-bottom:8px">Recurring macro themes:</p><div class="pattern-list">'+pats.map(p=>`<span class="pattern-tag">${p}</span>`).join('')+'</div></div>':''}
     `;
     document.getElementById('kb-patterns-wrap').style.display='block';
-  if (savedEntries.length>=2) {
-    const allThemes=savedEntries.flatMap(e=>e.macroThemes||[]);const thC={};allThemes.forEach(t=>{thC[t]=(thC[t]||0)+1;});
-    const topTh=Object.entries(thC).sort((a,b)=>b[1]-a[1]).slice(0,6);
-    const pats=topTh.filter(([,c])=>c>1).map(([t,c])=>`${t} (${c}x)`);
-    if (pats.length) {
-      document.getElementById('kb-patterns').innerHTML=`<p style="font-size:13px;color:var(--muted);margin-bottom:10px">Themes across multiple videos:</p><div class="pattern-list">${pats.map(p=>`<span class="pattern-tag">${p}</span>`).join('')}</div>`;
-      document.getElementById('kb-patterns-wrap').style.display='block';
-      if (topT.length>=2) {
-        if (kbTickerChart) kbTickerChart.destroy();
-        const ctx2=document.getElementById('kb-ticker-chart').getContext('2d');
-        kbTickerChart=new Chart(ctx2,{type:'bar',data:{labels:topT.map(([t])=>t),datasets:[{label:'Mentions',data:topT.map(([,c])=>c),backgroundColor:'rgba(0,212,170,0.6)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Most Mentioned Tickers Across All Videos',color:'#94A3B8',font:{family:'Inter',size:12}}},scales:{x:{ticks:{color:'#64748B'},grid:{color:'rgba(30,45,69,0.5)'}},y:{ticks:{color:'#64748B'},grid:{color:'rgba(30,45,69,0.5)'},border:{display:false},min:0}}}});
-      }
-    } else { document.getElementById('kb-patterns-wrap').style.display='none'; }
+    if (topT.length>=2) {
+      if (kbTickerChart) kbTickerChart.destroy();
+      const ctx2=document.getElementById('kb-ticker-chart').getContext('2d');
+      kbTickerChart=new Chart(ctx2,{type:'bar',data:{labels:topT.map(([t])=>t),datasets:[{label:'Mentions',data:topT.map(([,c])=>c),backgroundColor:'rgba(0,212,170,0.6)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Most Mentioned Tickers Across All Videos',color:'#94A3B8',font:{family:'Inter',size:12}}},scales:{x:{ticks:{color:'#64748B'},grid:{color:'rgba(30,45,69,0.5)'}},y:{ticks:{color:'#64748B'},grid:{color:'rgba(30,45,69,0.5)'},border:{display:false},min:0}}}});
+    }
+  } else {
+    document.getElementById('kb-patterns-wrap').style.display='none';
   }
+
   const wrap=document.getElementById('kb-list-wrap');
-  if (!filtered.length) { wrap.innerHTML=savedEntries.length?`<div class="empty-state"><div class="empty-icon">🔍</div><div>No results for "${q}"</div></div>`:`<div class="empty-state"><div class="empty-icon">📂</div><div>No saved analyses yet.<br>Analyze a video and click <strong>Save to Knowledge Base</strong>.</div></div>`; return; }
-  wrap.innerHTML=`<div class="saved-list">${filtered.map(s=>`<div class="saved-item" onclick="loadSaved(${s.id})"><div style="flex:1;min-width:0"><div class="saved-title">${s.title}</div><div class="saved-meta"><span>${s.date}</span>${(s.tickers||[]).slice(0,4).map(t=>`<span style="color:var(--accent);font-family:var(--mono);font-size:11px">${t}</span>`).join('')}<span style="color:${sentColor(s.sentiment)}">${s.sentiment}</span><span style="color:${riskColor(s.riskLevel)}">${s.riskLevel} Risk</span></div></div><button class="del-btn" onclick="event.stopPropagation();deleteSaved(${s.id})">×</button></div>`).join('')}</div>`;
+  if (!filtered.length) {
+    wrap.innerHTML=savedEntries.length
+      ?`<div class="empty-state"><div class="empty-icon">🔍</div><div>No results for "${q}"</div></div>`
+      :`<div class="empty-state"><div class="empty-icon">📂</div><div>No saved analyses yet.<br>Analyze a video and click <strong>Save to Knowledge Base</strong>.</div></div>`;
+    return;
+  }
+  wrap.innerHTML=`<div class="saved-list">${filtered.map(s=>`
+    <div class="saved-item" onclick="loadSaved(${s.id})">
+      <div style="flex:1;min-width:0">
+        <div class="saved-title">${s.title}</div>
+        <div class="saved-meta">
+          <span>${s.date}</span>
+          ${(s.tickers||[]).slice(0,4).map(t=>`<span style="color:var(--accent);font-family:var(--mono);font-size:11px">${t}</span>`).join('')}
+          <span style="color:${sentColor(s.sentiment)}">${s.sentiment}</span>
+          <span style="color:${riskColor(s.riskLevel)}">${s.riskLevel} Risk</span>
+        </div>
+      </div>
+      <button class="del-btn" onclick="event.stopPropagation();deleteSaved(${s.id})">×</button>
+    </div>`).join('')}</div>`;
 }
+
 
 function loadSaved(id) { const e=savedEntries.find(s=>s.id===id); if(!e)return; currentResult=e.result; currentTranscript=e.transcript; switchView('analyze'); renderResults(currentResult); }
 function deleteSaved(id) { if(!confirm('Delete this analysis?'))return; savedEntries=savedEntries.filter(s=>s.id!==id); saveKB(); renderKB(); }
