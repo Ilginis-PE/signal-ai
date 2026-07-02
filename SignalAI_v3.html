@@ -252,6 +252,47 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
 .framework-label { font-size: 10px; font-family: var(--mono); padding: 2px 6px; border-radius: 4px; font-weight: 700; white-space: nowrap; }
 .confluence-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 14px; font-size: 14px; line-height: 1.65; color: var(--text); }
 .confluence-label { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-family: var(--mono); }
+
+/* QUANT ANALYSIS SECTIONS */
+.causal-chain { display: flex; flex-direction: column; gap: 0; }
+.causal-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(30,45,69,0.5); }
+.causal-step:last-child { border-bottom: none; }
+.causal-arrow { font-size: 20px; flex-shrink: 0; color: var(--accent); margin-top: 2px; }
+.causal-content { flex: 1; }
+.causal-cause { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; font-family: var(--mono); }
+.causal-text { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.causal-implication { font-size: 12px; color: var(--accent); font-style: italic; }
+
+.signal-depth-row { background: var(--surface2); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--border); }
+.signal-depth-name { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.signal-depth-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.depth-bar-row { display: flex; align-items: center; gap: 8px; }
+.depth-bar-label { font-size: 10px; color: var(--muted); min-width: 100px; font-family: var(--mono); }
+.depth-bar-track { flex: 1; height: 5px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+.depth-bar-fill { height: 100%; border-radius: 99px; background: var(--accent); }
+.depth-bar-val { font-size: 11px; font-weight: 700; font-family: var(--mono); color: var(--accent); min-width: 24px; text-align: right; }
+.depth-total { display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 4px; }
+.depth-total-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+.depth-total-score { font-size: 18px; font-weight: 800; font-family: var(--mono); }
+.depth-interpretation { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+.factor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:560px){ .factor-grid { grid-template-columns: 1fr; } }
+.factor-card { background: var(--surface2); border-radius: 9px; padding: 14px; border: 1px solid var(--border); }
+.factor-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; font-family: var(--mono); }
+.factor-score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.factor-score-val { font-size: 24px; font-weight: 800; font-family: var(--mono); }
+.factor-bar { flex: 1; height: 6px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+.factor-bar-fill { height: 100%; border-radius: 99px; }
+.factor-rationale { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.prob-statement { background: linear-gradient(135deg, rgba(0,212,170,0.08), rgba(0,153,255,0.08)); border: 1px solid rgba(0,212,170,0.3); border-radius: 10px; padding: 18px 20px; font-size: 15px; font-weight: 600; line-height: 1.6; color: var(--text); font-style: italic; }
+.prob-label { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; font-family: var(--mono); }
+
+.edge-box { background: var(--surface2); border: 1px solid rgba(139,92,246,0.3); border-radius: 10px; padding: 16px; font-size: 14px; line-height: 1.65; color: var(--text); }
+.silence-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgba(30,45,69,0.5); font-size: 14px; line-height: 1.5; }
+.silence-item:last-child { border-bottom: none; }
+.silence-icon { font-size: 16px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -276,9 +317,9 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
 
   <!-- API KEY BANNER -->
   <div class="api-banner" id="api-banner">
-    <div class="api-banner-title">🔑 Enter your free Gemini API Key to get started</div>
+    <div class="api-banner-title">🔑 Enter your free Groq API Key to get started</div>
     <div class="api-banner-sub">
-      Get your free key at <strong style="color:var(--text)">aistudio.google.com</strong> → Get API Key → Create API Key. Free, no credit card needed. Saved locally in your browser.
+      Get your free key at <strong style="color:var(--text)">console.groq.com</strong> → API Keys → Create API Key. Free, no credit card, never expires. Saved locally in your browser.
     </div>
     <div class="api-input-row">
       <input class="api-input" type="password" id="api-key-input" placeholder="AIzaSy..." />
@@ -293,7 +334,7 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
   <div class="hero">
     <div class="hero-eyebrow">Quantitative Media Intelligence</div>
     <h1>Deep signal extraction from<br><span class="accent">financial video content</span></h1>
-    <p>Paste a transcript from any financial video. Get quant scores, claim classification, catalyst mapping, entity analysis, bull/bear cases, and cross-video pattern detection — powered by free Gemini AI.</p>
+    <p>Paste a transcript from any financial video. Get quant scores, claim classification, catalyst mapping, entity analysis, bull/bear cases, and cross-video pattern detection — powered by free Groq AI.</p>
   </div>
 
   <div class="card">
@@ -403,6 +444,96 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
         </div>
       </div>
     </div>
+
+    <!-- PROBABILITY STATEMENT -->
+    <div class="card" id="prob-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(0,212,170,0.13)">📊</div>
+        <span class="card-title">PROBABILITY-WEIGHTED THESIS</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">HEDGE FUND FRAMING</span>
+      </div>
+      <div class="card-body">
+        <div class="prob-label">Quantitative Probability Statement</div>
+        <div class="prob-statement" id="prob-statement"></div>
+      </div>
+    </div>
+
+    <!-- EDGE IDENTIFICATION -->
+    <div class="card" id="edge-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(139,92,246,0.13)">⚔️</div>
+        <span class="card-title">EDGE IDENTIFICATION</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">WHY DOES THIS GENERATE ALPHA?</span>
+      </div>
+      <div class="card-body">
+        <div class="edge-box" id="edge-box"></div>
+      </div>
+    </div>
+
+    <!-- CAUSAL CHAIN -->
+    <div class="card" id="causal-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(0,153,255,0.13)">🔗</div>
+        <span class="card-title">CAUSAL CHAIN MAPPING</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">CAUSE → EFFECT → ASSET IMPLICATION</span>
+      </div>
+      <div class="card-body">
+        <div class="causal-chain" id="causal-chain"></div>
+      </div>
+    </div>
+
+    <!-- SIGNAL DEPTH SCORES -->
+    <div class="card" id="depth-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(245,158,11,0.13)">🔬</div>
+        <span class="card-title">SIGNAL DEPTH ANALYSIS</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">MECHANISM · PRECEDENT · FALSIFIABILITY · TIME · DATA</span>
+      </div>
+      <div class="card-body" id="depth-body"></div>
+    </div>
+
+    <!-- SECOND ORDER EFFECTS -->
+    <div class="card" id="second-order-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(16,185,129,0.13)">🌊</div>
+        <span class="card-title">SECOND ORDER EFFECTS</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">WHAT MOST INVESTORS MISS</span>
+      </div>
+      <div class="card-body"><ul class="blist" id="second-order-list"></ul></div>
+    </div>
+
+    <!-- FAILURE MODES -->
+    <div class="card" id="failure-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(239,68,68,0.13)">💀</div>
+        <span class="card-title">THESIS FAILURE MODES</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">WHAT WOULD PROVE THIS WRONG</span>
+      </div>
+      <div class="card-body"><ul class="blist" id="failure-list"></ul></div>
+    </div>
+
+    <!-- FACTOR OVERLAY -->
+    <div class="card" id="factor-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(0,212,170,0.13)">📐</div>
+        <span class="card-title">FACTOR OVERLAY</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">VALUE · MOMENTUM · QUALITY · MACRO</span>
+      </div>
+      <div class="card-body">
+        <div class="factor-grid" id="factor-grid"></div>
+      </div>
+    </div>
+
+    <!-- WHAT IS NOT BEING SAID -->
+    <div class="card" id="silence-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(100,116,139,0.13)">🤫</div>
+        <span class="card-title">WHAT IS NOT BEING SAID</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono)">SIGNIFICANT OMISSIONS & SILENCES</span>
+      </div>
+      <div class="card-body" id="silence-body"></div>
+    </div>
+
     <!-- CLAIM CLASSIFIER -->
     <div class="card" id="claims-card" style="display:none">
       <div class="card-header">
@@ -576,9 +707,11 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
 // ═══════════════════════════════════════════
 // GEMINI API
 // ═══════════════════════════════════════════
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GROQ_MODEL = 'llama-3.3-70b-versatile'; // Fast, free, never expires
 
-const SYSTEM_PROMPT = `You are a quantitative financial analyst with deep expertise in macro economics, monetary systems, and investment frameworks. You have been trained on the following five core analytical frameworks extracted from leading financial analysts:
+const SYSTEM_PROMPT = `You are a Senior Quantitative Analyst at a top-tier macro hedge fund. You combine deep macro economics expertise with rigorous quantitative methodology. You think like Renaissance Technologies meets Bridgewater Associates — systematic, evidence-based, probabilistic, and always asking "what is the actual edge here?"
+
+You have been trained on the following five core analytical frameworks extracted from leading financial analysts:
 
 FRAMEWORK 1 — MAINSTREAM ECONOMICS IS BROKEN (Jeff Snider / Eurodollar University)
 - The Federal Reserve has operated with incorrect definitions of money for 50+ years
@@ -628,11 +761,44 @@ CURRENT CORPUS CONSENSUS (from 5 analyzed videos):
 - Inflation: 4/5 videos flagged — HIGHEST CONVICTION SIGNAL
 - Monetary Policy breakdown: 3/5 videos — HIGH CONVICTION
 - Stagflation risk: 2/5 videos — ELEVATED
-- Geopolitical risk: 2/5 videos — ELEVATED  
+- Geopolitical risk: 2/5 videos — ELEVATED
 - Average Contrarian Score: 84/100 — corpus is strongly anti-consensus
 - Average Conviction Score: 90/100 — analysts speak with high certainty
 - Most mentioned asset: Bitcoin (3/5 videos), Gold (2/5 videos)
 - Primary hard assets thesis: CONFIRMED across multiple frameworks
+
+QUANTITATIVE ANALYSIS METHODOLOGY:
+Apply these hedge fund thinking frameworks to every analysis:
+
+1. EDGE IDENTIFICATION: For every signal ask — "Why would this generate alpha? What is the specific mechanism? Why hasn't the market already priced this in?"
+
+2. CAUSAL CHAIN MAPPING: Do not just extract what analysts say. Map the FULL logical chain: Cause → Mechanism → Primary Effect → Secondary Effect → Tertiary Effect → Asset implications at each level. Example: "Fed monetizes debt [cause] → dollar purchasing power falls [mechanism] → real yields go negative [primary] → gold reprices as monetary anchor [secondary] → gold miners operating leverage amplifies gains 3-5x [tertiary]"
+
+3. PROBABILITY FRAMING: Express all signals as probability-weighted outcomes not predictions. "High probability gold outperforms over 12-18 months under fiscal dominance conditions based on 4/5 corpus videos and current macro regime alignment."
+
+4. SIGNAL DEPTH SCORING: Rate every major signal on 5 dimensions:
+   - Mechanism Clarity (0-20): Does analyst explain the HOW not just the WHAT?
+   - Historical Precedent (0-20): Do they cite past examples or data?
+   - Falsifiability (0-20): Do they state what would prove them WRONG?
+   - Time Specificity (0-20): Do they give specific timeframes?
+   - Data Basis (0-20): Is it driven by hard data or intuition?
+   Total Signal Depth Score = sum of all 5 (0-100)
+
+5. SECOND ORDER EFFECTS: For every primary thesis identify what most investors MISS — the second and third order consequences that create the real opportunity.
+
+6. FAILURE MODE ANALYSIS: For every bullish thesis identify the 2-3 specific conditions that would invalidate it. This is how hedge funds stress test ideas.
+
+7. FACTOR OVERLAY: Score each mentioned asset against proven quant factors:
+   - Value: Is it cheap relative to history?
+   - Momentum: Is price trend confirming the thesis?
+   - Quality: Are fundamentals supporting it?
+   - Macro: Does current regime favor it?
+
+8. WHAT IS NOT BEING SAID: Flag important topics the analyst AVOIDS mentioning — silence is often as informative as speech.
+
+9. REGIME CONTEXT: The same signal means different things in different regimes. Always assess signal strength relative to current macro regime.
+
+10. ANALYST CREDIBILITY SIGNALS: Note whether the analyst provides specific falsifiable predictions vs vague directional calls. Specific and falsifiable = higher weight.
 
 ANALYSIS INSTRUCTIONS:
 Analyze the video transcript and return ONLY a valid JSON object with NO markdown, NO backticks, NO text before or after.
@@ -659,6 +825,23 @@ Return this exact JSON structure:
   },
   "frameworkAlignment": "string — which frameworks does this video confirm or contradict and how",
   "corpusConfluence": "string — how does this video align with or diverge from the 5-video corpus consensus",
+  "edgeIdentification": "string — what is the specific alpha-generating edge being described and why hasn't the market priced it in",
+  "causalChain": [
+    {"cause": "string", "mechanism": "string", "primaryEffect": "string", "secondaryEffect": "string", "tertiaryEffect": "string", "assetImplication": "string"}
+  ],
+  "signalDepthScores": [
+    {"signal": "string", "mechanismClarity": 15, "historicalPrecedent": 10, "falsifiability": 8, "timeSpecificity": 12, "dataBasis": 14, "totalDepth": 59, "interpretation": "string"}
+  ],
+  "secondOrderEffects": ["string — effect most investors miss"],
+  "failureModes": ["string — specific condition that would invalidate the thesis"],
+  "factorOverlay": {
+    "value": {"score": 50, "rationale": "string"},
+    "momentum": {"score": 50, "rationale": "string"},
+    "quality": {"score": 50, "rationale": "string"},
+    "macro": {"score": 50, "rationale": "string"}
+  },
+  "notBeingSaid": ["string — important topic the analyst avoided or did not mention"],
+  "probabilityStatement": "string — express the main thesis as a probability-weighted outcome statement",
   "assetClasses": ["Equities"],
   "tickers": ["BTC"],
   "macroThemes": ["Inflation"],
@@ -673,21 +856,17 @@ Return this exact JSON structure:
   "keyInsights": ["string"]
 }
 
-Framework scoring guide (0-100):
-- 0-30: Video shows no awareness or contradicts this framework
-- 31-60: Video partially touches on this framework
-- 61-80: Video clearly demonstrates understanding of this framework
-- 81-100: Video deeply confirms and extends this framework with new data
-
-General scoring:
+Scoring guide:
 - sentimentScore: 0=extremely bearish, 50=neutral, 100=extremely bullish
 - convictionScore: 0=very uncertain speaker, 100=extremely confident speaker
 - dataDensityScore: 0=all opinion no data, 100=all hard data and numbers
 - contrarianScore: 0=mainstream consensus view, 100=strongly against consensus
+- Framework scores 0-100: 0-30=weak/contradicts, 31-60=partial, 61-80=clear, 81-100=deep confirmation
+- Factor scores 0-100: 0=very unfavorable, 50=neutral, 100=extremely favorable
 
-Extract ALL real numbers, percentages, dates and statistics mentioned. Use [] for empty arrays. Return ONLY the JSON object.`;
+Extract ALL real numbers, percentages, dates and statistics. Use [] for empty arrays. Return ONLY the JSON object.`;
 
-async function callGemini(prompt, systemInstruction) {
+async function callGroq(prompt, systemInstruction) {
   const key = getApiKey();
   if (!key) { showErr('Please enter your Gemini API key above first.'); return null; }
 
@@ -719,7 +898,7 @@ async function callGemini(prompt, systemInstruction) {
 // ═══════════════════════════════════════════
 // API KEY MANAGEMENT
 // ═══════════════════════════════════════════
-function getApiKey() { return localStorage.getItem('signal_ai_gemini_key') || 'AQ.Ab8RN6J-U6Ea82RSbAhdmz8XgdbYrdl4QXOI0yvPtjvuT62AnQ'; }
+function getApiKey() { return localStorage.getItem('signal_ai_gemini_key') || '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'; }
 
 function saveApiKey() {
   const key = document.getElementById('api-key-input').value.trim();
@@ -738,7 +917,7 @@ function changeApiKey() {
 
 function initApiKey() {
   // Key is hardcoded - always hide banner and show saved
-  localStorage.setItem('signal_ai_gemini_key', 'AQ.Ab8RN6J-U6Ea82RSbAhdmz8XgdbYrdl4QXOI0yvPtjvuT62AnQ');
+  localStorage.setItem('signal_ai_gemini_key', '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');
   document.getElementById('api-banner').classList.add('hidden');
   document.getElementById('api-saved').classList.add('show');
 }
@@ -833,7 +1012,7 @@ async function analyze() {
   animateLoadingSteps();
 
   try {
-    const raw = await callGemini('Analyze this financial video transcript:\n\n' + content.slice(0, 14000), SYSTEM_PROMPT);
+    const raw = await callGroq('Analyze this financial video transcript:\n\n' + content.slice(0, 14000), SYSTEM_PROMPT);
     if (!raw) { setLoading(false); return; }
 
     let jsonStr = raw;
@@ -904,6 +1083,109 @@ function renderResults(r) {
   if (r.assetClasses?.length) { document.getElementById('asset-chips').innerHTML=r.assetClasses.map(a=>chip(a,aColors[a]||'#64748B')).join(''); document.getElementById('asset-classes-wrap').style.display='block'; }
   if (r.tickers?.length) { document.getElementById('ticker-chips').innerHTML=r.tickers.map(t=>chip(t,'#00D4AA')).join(''); document.getElementById('tickers-wrap').style.display='block'; } else { document.getElementById('tickers-wrap').style.display='none'; }
   if (r.macroThemes?.length) { document.getElementById('macro-chips').innerHTML=r.macroThemes.map(m=>chip(m,'#64748B')).join(''); document.getElementById('macro-wrap').style.display='block'; } else { document.getElementById('macro-wrap').style.display='none'; }
+
+  // PROBABILITY STATEMENT
+  if (r.probabilityStatement) {
+    document.getElementById('prob-statement').textContent = r.probabilityStatement;
+    document.getElementById('prob-card').style.display = 'block';
+  } else { document.getElementById('prob-card').style.display = 'none'; }
+
+  // EDGE IDENTIFICATION
+  if (r.edgeIdentification) {
+    document.getElementById('edge-box').textContent = r.edgeIdentification;
+    document.getElementById('edge-card').style.display = 'block';
+  } else { document.getElementById('edge-card').style.display = 'none'; }
+
+  // CAUSAL CHAIN
+  if (r.causalChain?.length) {
+    const labels = ['Cause','Mechanism','Primary Effect','Secondary Effect','Tertiary Effect'];
+    const icons = ['🔥','⚙️','1️⃣','2️⃣','3️⃣'];
+    document.getElementById('causal-chain').innerHTML = r.causalChain.map((c,i) => `
+      <div class="causal-step">
+        <div class="causal-arrow">${icons[i] || '→'}</div>
+        <div class="causal-content">
+          <div class="causal-cause">${labels[i] || 'Step ' + (i+1)}</div>
+          <div class="causal-text">${c.cause || c.mechanism || c.primaryEffect || c.secondaryEffect || c.tertiaryEffect || ''}</div>
+          ${c.assetImplication ? `<div class="causal-implication">Asset implication: ${c.assetImplication}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+    document.getElementById('causal-card').style.display = 'block';
+  } else { document.getElementById('causal-card').style.display = 'none'; }
+
+  // SIGNAL DEPTH SCORES
+  if (r.signalDepthScores?.length) {
+    const depthColors = s => s >= 75 ? 'var(--accent)' : s >= 50 ? 'var(--warn)' : 'var(--red)';
+    document.getElementById('depth-body').innerHTML = r.signalDepthScores.map(s => {
+      const dims = [
+        {label:'Mechanism', val: s.mechanismClarity || 0, max: 20},
+        {label:'Precedent', val: s.historicalPrecedent || 0, max: 20},
+        {label:'Falsifiability', val: s.falsifiability || 0, max: 20},
+        {label:'Time Specificity', val: s.timeSpecificity || 0, max: 20},
+        {label:'Data Basis', val: s.dataBasis || 0, max: 20},
+      ];
+      const total = s.totalDepth || dims.reduce((a,d) => a+d.val, 0);
+      return `<div class="signal-depth-row">
+        <div class="signal-depth-name">${s.signal}</div>
+        <div class="signal-depth-bars">
+          ${dims.map(d => `<div class="depth-bar-row">
+            <div class="depth-bar-label">${d.label}</div>
+            <div class="depth-bar-track"><div class="depth-bar-fill" style="width:${(d.val/d.max)*100}%"></div></div>
+            <div class="depth-bar-val">${d.val}/${d.max}</div>
+          </div>`).join('')}
+        </div>
+        <div class="depth-total">
+          <span class="depth-total-label">SIGNAL DEPTH SCORE</span>
+          <span class="depth-total-score" style="color:${depthColors(total)}">${total}/100</span>
+        </div>
+        ${s.interpretation ? `<div class="depth-interpretation">${s.interpretation}</div>` : ''}
+      </div>`;
+    }).join('');
+    document.getElementById('depth-card').style.display = 'block';
+  } else { document.getElementById('depth-card').style.display = 'none'; }
+
+  // SECOND ORDER EFFECTS
+  if (r.secondOrderEffects?.length) {
+    document.getElementById('second-order-list').innerHTML = r.secondOrderEffects.map(e => bitem(e,'#10B981')).join('');
+    document.getElementById('second-order-card').style.display = 'block';
+  } else { document.getElementById('second-order-card').style.display = 'none'; }
+
+  // FAILURE MODES
+  if (r.failureModes?.length) {
+    document.getElementById('failure-list').innerHTML = r.failureModes.map(f => bitem(f,'#EF4444')).join('');
+    document.getElementById('failure-card').style.display = 'block';
+  } else { document.getElementById('failure-card').style.display = 'none'; }
+
+  // FACTOR OVERLAY
+  if (r.factorOverlay) {
+    const factors = [
+      {key:'value', name:'Value Factor', color:'#00D4AA'},
+      {key:'momentum', name:'Momentum Factor', color:'#0099FF'},
+      {key:'quality', name:'Quality Factor', color:'#8B5CF6'},
+      {key:'macro', name:'Macro Factor', color:'#F59E0B'},
+    ];
+    document.getElementById('factor-grid').innerHTML = factors.map(f => {
+      const d = r.factorOverlay[f.key] || {score:50, rationale:'No data'};
+      const pct = d.score || 50;
+      return `<div class="factor-card">
+        <div class="factor-name">${f.name}</div>
+        <div class="factor-score-row">
+          <div class="factor-score-val" style="color:${f.color}">${pct}</div>
+          <div class="factor-bar"><div class="factor-bar-fill" style="width:${pct}%;background:${f.color}"></div></div>
+        </div>
+        <div class="factor-rationale">${d.rationale || ''}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('factor-card').style.display = 'block';
+  } else { document.getElementById('factor-card').style.display = 'none'; }
+
+  // WHAT IS NOT BEING SAID
+  if (r.notBeingSaid?.length) {
+    document.getElementById('silence-body').innerHTML = r.notBeingSaid.map(s =>
+      `<div class="silence-item"><div class="silence-icon">🔇</div><span>${s}</span></div>`
+    ).join('');
+    document.getElementById('silence-card').style.display = 'block';
+  } else { document.getElementById('silence-card').style.display = 'none'; }
 
   // FRAMEWORK SCORES
   if (r.frameworkScores) {
@@ -980,7 +1262,7 @@ async function askQ() {
   const btn=document.getElementById('qa-btn'); btn.textContent='…'; btn.disabled=true;
   document.getElementById('qa-answer').classList.remove('show');
   try {
-    const ans = await callGemini(`Transcript:\n${currentTranscript.slice(0,8000)}\n\nQuestion: ${q}`, 'You are a quantitative financial analyst. Answer questions about the video transcript concisely and precisely, citing specific evidence from the transcript.');
+    const ans = await callGroq(`Transcript:\n${currentTranscript.slice(0,8000)}\n\nQuestion: ${q}`, 'You are a quantitative financial analyst. Answer questions about the video transcript concisely and precisely, citing specific evidence from the transcript.');
     const el=document.getElementById('qa-answer'); el.textContent=ans||'No answer found.'; el.classList.add('show');
   } catch(e) { const el=document.getElementById('qa-answer'); el.textContent='Error: '+e.message; el.classList.add('show'); }
   btn.textContent='Ask'; btn.disabled=false;
