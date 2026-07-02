@@ -327,7 +327,7 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
     </div>
   </div>
   <div class="api-saved" id="api-saved">
-    <span>✅ Gemini API key saved — ready to analyze</span>
+    <span>✅ Groq API key saved — ready to analyze</span>
     <button class="api-change-btn" onclick="changeApiKey()">Change Key</button>
   </div>
 
@@ -868,43 +868,47 @@ Extract ALL real numbers, percentages, dates and statistics. Use [] for empty ar
 
 async function callGroq(prompt, systemInstruction) {
   const key = getApiKey();
-  if (!key) { showErr('Please enter your Gemini API key above first.'); return null; }
+  if (!key) { showErr('Please enter your Groq API key above first.'); return null; }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
-  const body = {
-    system_instruction: { parts: [{ text: systemInstruction }] },
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.3, maxOutputTokens: 8192 }
-  };
-
-  const resp = await fetch(url, {
+  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: systemInstruction },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.3,
+      max_tokens: 4000
+    })
   });
 
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}));
     const msg = err?.error?.message || resp.statusText;
-    if (resp.status === 400) throw new Error('Invalid API key. Check your key at aistudio.google.com');
+    if (resp.status === 401) throw new Error('Invalid Groq API key. Get a free key at console.groq.com');
     if (resp.status === 429) throw new Error('Rate limit hit. Wait 60 seconds and try again.');
-    throw new Error('Gemini API error ' + resp.status + ': ' + msg);
+    throw new Error('Groq API error ' + resp.status + ': ' + msg);
   }
 
   const data = await resp.json();
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return data?.choices?.[0]?.message?.content || '';
 }
 
 // ═══════════════════════════════════════════
 // API KEY MANAGEMENT
 // ═══════════════════════════════════════════
-function getApiKey() { return localStorage.getItem('signal_ai_gemini_key') || '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'; }
+function getApiKey() { return localStorage.getItem('signal_ai_groq_key') || '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'; }
 
 function saveApiKey() {
   const key = document.getElementById('api-key-input').value.trim();
-  if (!key) return alert('Please paste your Gemini API key.');
+  if (!key) return alert('Please paste your Groq API key.');
   if (key.length < 20) return alert('That key looks too short. Please paste the full API key.');
-  localStorage.setItem('signal_ai_gemini_key', key);
+  localStorage.setItem('signal_ai_groq_key', key);
   document.getElementById('api-banner').classList.add('hidden');
   document.getElementById('api-saved').classList.add('show');
 }
@@ -917,7 +921,7 @@ function changeApiKey() {
 
 function initApiKey() {
   // Key is hardcoded - always hide banner and show saved
-  localStorage.setItem('signal_ai_gemini_key', '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');
+  localStorage.setItem('signal_ai_groq_key', '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');
   document.getElementById('api-banner').classList.add('hidden');
   document.getElementById('api-saved').classList.add('show');
 }
