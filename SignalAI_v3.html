@@ -773,7 +773,7 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
 // ═══════════════════════════════════════════
 // GEMINI API
 // ═══════════════════════════════════════════
-const GROQ_MODEL = 'llama-3.3-70b-versatile'; // Fast, free, never expires
+const GROQ_MODEL = 'llama-3.1-8b-instant'; // Fast, free, never expires
 
 const SYSTEM_PROMPT = `You are a quantitative financial analyst. Your ONLY job is to return a single valid JSON object. 
 
@@ -839,7 +839,7 @@ async function callGroq(prompt, systemInstruction) {
       'Authorization': `Bearer ${key}`
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
+      model: 'llama-3.1-8b-instant',
       messages: [
         { role: 'system', content: systemInstruction.slice(0, 3500) },
         { role: 'user', content: prompt }
@@ -867,7 +867,7 @@ async function callGroq(prompt, systemInstruction) {
 // ═══════════════════════════════════════════
 // API KEY MANAGEMENT
 // ═══════════════════════════════════════════
-function getApiKey() { return localStorage.getItem('signal_ai_groq_key') || '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'; }
+function getApiKey() { return localStorage.getItem('signal_ai_groq_key') || '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'; }
 
 function saveApiKey() {
   const key = document.getElementById('api-key-input').value.trim();
@@ -886,7 +886,7 @@ function changeApiKey() {
 
 function initApiKey() {
   // Key is hardcoded - always hide banner and show saved
-  localStorage.setItem('signal_ai_groq_key', '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');
+  localStorage.setItem('signal_ai_groq_key', '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');
   document.getElementById('api-banner').classList.add('hidden');
   document.getElementById('api-saved').classList.add('show');
 }
