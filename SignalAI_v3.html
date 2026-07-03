@@ -775,125 +775,25 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
 // ═══════════════════════════════════════════
 const GROQ_MODEL = 'llama-3.3-70b-versatile'; // Fast, free, never expires
 
-const SYSTEM_PROMPT = `You are an elite quantitative financial analyst combining the frameworks of the world's best macro economists, institutional quant traders, and investment strategists. You have been trained on 11 videos from top analysts and have extracted the following verified intelligence corpus:
+const SYSTEM_PROMPT = `You are a quantitative financial analyst. Your ONLY job is to return a single valid JSON object. 
 
-═══════════════════════════════════════════════════════
-CORPUS CONSENSUS (from 11 analyzed videos)
-═══════════════════════════════════════════════════════
+CRITICAL: Return ONLY raw JSON. No markdown. No explanation. No text before or after. Start your response with { and end with }. Nothing else.
 
-HIGHEST CONVICTION SIGNALS (appearing in 5+ videos):
-- Inflation: 7/11 videos — EXTREME CONVICTION
-- Monetary Policy Breakdown: 6/11 videos — EXTREME CONVICTION
-- Average Contrarian Score: 70/100 — corpus is strongly anti-consensus
-- Average Conviction Score: 84/100 — analysts speak with high certainty
-- Average Risk Score: 70/100 — elevated systemic risk consensus
-- Sentiment Distribution: 4 Bearish, 3 Mixed, 4 Neutral — NO BULLISH consensus
-- Most mentioned asset: Bitcoin (3x), Gold (3x), Equities (6x)
+You have been trained on 11 videos establishing these frameworks:
+1. MAINSTREAM ECONOMICS BROKEN (Snider): Fed lost touch 50+ years, yield curves are real signal, CPI/GDP misleading
+2. STATE CHANGE/CRISIS (Snider): Crises caused by behavioral state changes not loss size, private credit bust 2026
+3. SAVE CURRENCY VS BONDS (Gromen): Binary policy choice, both paths lead to gold/BTC outperformance
+4. GOLD REVALUATION (Gromen): 261M oz gold, oil inflation impossible at 125% debt/GDP, BTC = individual equivalent
+5. HYPER-FINANCIALIZATION: Wall Street not capitalism, productive capital vs financial capital
+6. FIBONACCI/TECHNICAL: Retracements 23.6/38.2/50/61.8/78.6%, extensions 127.2/161.8/261.8%
+7. GEOPOLITICAL RISK (Johnson): Economic statecraft, Hormuz closure, reserve currency transition
 
-VERIFIED DATA POINTS FROM CORPUS:
-- Fed lost touch with monetary system: 50+ years
-- Fed discontinued M3 money supply: 2005-2006
-- Private credit bust projected: 2026 (mirrors 2008 pattern)
-- Bernanke "subprime contained" statement: March 2007 (proved wrong)
-- US defense budget increase: $500 billion
-- Swiss National Bank rate: 0.5%, Canadian rate: 2.75%
-- Adjusted Warren Buffett metric: extreme overvaluation
-- Gold revaluation mechanism: 261M oz x price increase = Treasury injection
-- High debt-to-GDP: makes 1970s-style oil inflation impossible
+Corpus consensus: Inflation 7/11 videos, avg contrarian 70/100, avg conviction 84/100, BTC+Gold primary hedges confirmed
 
-═══════════════════════════════════════════════════════
-FRAMEWORK 1 — MAINSTREAM ECONOMICS IS BROKEN (Jeff Snider)
-Score 81-100: Deep understanding of eurodollar mechanics, yield curves as real signal
-Score 61-80: Understands Fed limitations, alternative monetary indicators
-Score 31-60: Partial awareness of mainstream economics failures
-Score 0-30: Relies on CPI, GDP, payrolls as primary indicators
-Key signals to extract: yield curve analysis, TIPS curves, eurodollar market references, M3 discontinuation awareness, federal funds rate manipulation critique
-
-FRAMEWORK 2 — STATE CHANGE / CRISIS BEHAVIOR (Snider/Eurodollar)
-Score 81-100: Identifies behavioral state changes as crisis drivers, maps accumulation patterns
-Score 61-80: Understands crises are behavioral not size-driven, watches esoteric signals
-Score 31-60: Aware of systemic risks beyond headline numbers
-Score 0-30: Focuses on surface-level loss amounts not behavioral shifts
-Private credit bust 2026 projection: HIGH CONVICTION from corpus
-Key signals: behavioral recalibration, expectation shifts, Beveridge curve deterioration, banking system stress indicators
-
-FRAMEWORK 3 — SAVE CURRENCY VS SAVE BOND MARKET (Luke Gromen)
-Score 81-100: Fully understands binary policy dilemma, maps both paths to hard assets
-Score 61-80: Understands the dilemma, sees gold/BTC as primary beneficiaries
-Score 31-60: Aware of policy tensions, partial understanding of implications
-Score 0-30: Believes Fed can manage both simultaneously
-Key data points: 10Y Treasury above 5% with 120%+ debt/GDP = danger zone, adjusted Warren Buffett metric at extremes, market breadth deterioration at new highs = fragility
-
-FRAMEWORK 4 — GOLD REVALUATION / DOLLAR DEBASEMENT (Gromen)
-Score 81-100: Understands gold revaluation mechanism, debt-to-GDP constraints on alternatives
-Score 61-80: Sees gold and Bitcoin as primary hedges, understands dollar debasement thesis
-Score 31-60: Bullish on hard assets without mechanistic understanding
-Score 0-30: Dismisses gold/Bitcoin as monetary tools
-Key mechanism: oil inflation impossible at 125% debt/GDP unlike 1970s (25-30%), gold revaluation = money printing via gold, Bitcoin = individual equivalent
-
-FRAMEWORK 5 — HYPER-FINANCIALIZATION (Quant-3)
-Score 81-100: Distinguishes Wall Street from capitalism, understands productive vs financial capital
-Score 61-80: Sees financialization as systemic rot, supports competition over consolidation
-Score 31-60: Skeptical of financial markets but no systemic framework
-Score 0-30: Equates Wall Street success with economic health
-
-FRAMEWORK 6 — FIBONACCI & TECHNICAL ANALYSIS (New from corpus)
-Score 81-100: Integrates Fibonacci with macro context, uses retracements for precise entry/exit
-Score 61-80: Uses Fibonacci retracements and extensions systematically
-Score 31-60: Aware of Fibonacci but applies inconsistently
-Score 0-30: No technical framework, purely fundamental
-Key levels: 23.6%, 38.2%, 50%, 61.8%, 78.6% retracements; 127.2%, 161.8%, 261.8% extensions
-Integration insight: Fibonacci entry + macro tailwind = highest conviction trade setup
-
-FRAMEWORK 7 — GEOPOLITICAL RISK (Brent Johnson)
-Score 81-100: Maps economic statecraft, models geopolitical scenarios to asset outcomes
-Score 61-80: Factors geopolitical risk into asset allocation
-Score 31-60: Aware of geopolitical risks without systematic framework
-Score 0-30: Ignores geopolitical factors in investment thesis
-Key risks from corpus: Hormuz closure, US-China conflict, global reserve currency transition, economic sanctions weaponization
-
-═══════════════════════════════════════════════════════
-QUANT EDGE FRAMEWORK (from Patrick Boyle + Quant corpus)
-═══════════════════════════════════════════════════════
-For every signal ask: WHY should this generate alpha? What is the specific edge?
-- Is this already priced in by the market?
-- How many historical occurrences support this?
-- What conditions make it fail? (falsifiability)
-- What is the expected value per occurrence?
-- Factor exposure: Value, Momentum, Quality, Low Volatility, Macro?
-
-SECOND ORDER EFFECTS FRAMEWORK:
-For every major thesis extract the full causal chain:
-Primary effect → Secondary effect → Tertiary effect → Asset beneficiaries at each level
-
-SIGNAL DEPTH REQUIREMENTS:
-Rate every extracted signal on:
-1. Mechanism clarity (0-100): Does analyst explain WHY not just WHAT?
-2. Historical precedent (0-100): Are past examples cited?
-3. Falsifiability (0-100): Does analyst state what would prove them wrong?
-4. Time specificity (0-100): Is there a specific timeframe given?
-5. Data support (0-100): Is claim backed by hard numbers?
-
-HIGH CONVICTION THRESHOLD: Signal depth score average above 70 across all 5 dimensions
-
-═══════════════════════════════════════════════════════
-REGIME CONTEXT (current from macro dashboard)
-═══════════════════════════════════════════════════════
-Current macro regime: Risk On transitioning — but corpus suggests this is fragile
-- Gold breaking out ($3,327) in Risk On environment = liquidity injection signal (Howell framework)
-- Credit spreads tight (3.21%) but private credit bust looming (2026 projection)
-- VIX calm (17.84) but market breadth deteriorating = classic pre-crisis fragility pattern
-- Yield curve normalizing (+0.50%) but 10Y at 4.58% with high debt load = stress point
-Signal: Surface calm, underlying fragility — matches corpus bearish/mixed consensus
-
-═══════════════════════════════════════════════════════
-ANALYSIS INSTRUCTIONS
-═══════════════════════════════════════════════════════
-Analyze the video transcript and return ONLY a valid JSON object. No markdown, no backticks, no text before or after. Just raw JSON.
-
+Return this exact JSON structure:
 {
   "title": "string",
-  "summary": "string — 2-3 sentence executive summary including the core causal chain",
+  "summary": "string",
   "sentimentLabel": "Bullish|Bearish|Neutral|Mixed",
   "sentimentScore": 50,
   "convictionScore": 50,
@@ -903,46 +803,30 @@ Analyze the video transcript and return ONLY a valid JSON object. No markdown, n
   "timeHorizonMonths": 12,
   "riskLevel": "Low|Medium|High",
   "riskScore": 50,
-  "frameworkScores": {
-    "mainstreamEconomicsBroken": 50,
-    "stateChangeFramework": 50,
-    "saveCurrencyVsBonds": 50,
-    "goldRevaluation": 50,
-    "hyperFinancialization": 50,
-    "fibonacciTechnical": 50,
-    "geopoliticalRisk": 50
-  },
-  "edgeAnalysis": "string — what is the specific investment edge this video identifies and why has the market not already priced it in?",
-  "causalChain": "string — map the full causal chain: primary effect → secondary effect → tertiary effect → asset beneficiaries",
-  "secondOrderEffects": ["effect 1", "effect 2", "effect 3"],
-  "signalDepthScores": {
-    "mechanismClarity": 50,
-    "historicalPrecedent": 50,
-    "falsifiability": 50,
-    "timeSpecificity": 50,
-    "dataSupport": 50
-  },
+  "frameworkScores": {"mainstreamEconomicsBroken":50,"stateChangeFramework":50,"saveCurrencyVsBonds":50,"goldRevaluation":50,"hyperFinancialization":50,"fibonacciTechnical":50,"geopoliticalRisk":50},
+  "edgeAnalysis": "string",
+  "causalChain": "string",
+  "secondOrderEffects": ["string"],
+  "signalDepthScores": {"mechanismClarity":50,"historicalPrecedent":50,"falsifiability":50,"timeSpecificity":50,"dataSupport":50},
   "signalDepthAverage": 50,
-  "frameworkAlignment": "string — which frameworks confirmed/contradicted and how",
-  "corpusConfluence": "string — how this aligns with or diverges from the 11-video corpus consensus",
-  "regimeContext": "string — how signals interact with current macro regime (Risk On transitioning, gold breakout, private credit stress)",
-  "assetClasses": ["Equities"],
-  "tickers": ["BTC"],
-  "macroThemes": ["Inflation"],
-  "dataPoints": [{"label": "string", "value": "string"}],
-  "claims": [{"type": "FACT|OPINION|PREDICTION|WARNING", "text": "string", "confidence": 90}],
+  "frameworkAlignment": "string",
+  "corpusConfluence": "string",
+  "regimeContext": "string",
+  "assetClasses": ["string"],
+  "tickers": ["string"],
+  "macroThemes": ["string"],
+  "dataPoints": [{"label":"string","value":"string"}],
+  "claims": [{"type":"FACT","text":"string","confidence":80}],
   "bullCase": ["string"],
   "bearCase": ["string"],
-  "catalysts": [{"name": "string", "description": "string", "horizon": "Short-term|Medium-term|Long-term", "icon": "📈", "urgency": 75}],
-  "entities": [{"name": "string", "type": "PERSON|INSTITUTION|COUNTRY|COMPANY", "role": "string"}],
+  "catalysts": [{"name":"string","description":"string","horizon":"Short-term","icon":"📈","urgency":75}],
+  "entities": [{"name":"string","type":"PERSON","role":"string"}],
   "contrarianFlags": ["string"],
-  "fibonacciLevels": ["string — specific Fib levels mentioned or implied"],
-  "factorExposure": ["Value", "Momentum", "Quality", "Low Volatility", "Macro"],
+  "fibonacciLevels": ["string"],
+  "factorExposure": ["string"],
   "actionItems": ["string"],
   "keyInsights": ["string"]
-}
-
-Extract ALL real numbers, percentages, dates, statistics. Use [] for empty arrays. Return ONLY the JSON.`;
+}`;
 
 async function callGroq(prompt, systemInstruction) {
   const key = getApiKey();
@@ -1101,9 +985,12 @@ async function analyze() {
     if (!raw) { setLoading(false); return; }
 
     let jsonStr = raw;
-    const match = raw.match(/\{[\s\S]*\}/);
+    // Strip any markdown formatting Groq might add
+    jsonStr = jsonStr.replace(/```json/gi,'').replace(/```/g,'').trim();
+    // Extract just the JSON object if there's surrounding text
+    const match = jsonStr.match(/\{[\s\S]*\}/);
     if (match) jsonStr = match[0];
-    jsonStr = jsonStr.replace(/```json|```/g,'').trim();
+    jsonStr = jsonStr.trim();
 
     try {
       currentResult = JSON.parse(jsonStr);
