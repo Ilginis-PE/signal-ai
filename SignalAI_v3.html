@@ -957,11 +957,11 @@ async function callGroq(prompt, systemInstruction) {
     body: JSON.stringify({
       model: 'llama-3.3-70b-versatile',
       messages: [
-        { role: 'system', content: systemInstruction },
+        { role: 'system', content: systemInstruction.slice(0, 3500) },
         { role: 'user', content: prompt }
       ],
       temperature: 0.3,
-      max_tokens: 4000
+      max_tokens: 3000
     })
   });
 
@@ -970,11 +970,14 @@ async function callGroq(prompt, systemInstruction) {
     const msg = err?.error?.message || resp.statusText;
     if (resp.status === 401) throw new Error('Invalid Groq API key. Get a free key at console.groq.com');
     if (resp.status === 429) throw new Error('Rate limit hit. Wait 60 seconds and try again.');
+    if (resp.status === 413) throw new Error('Request too large. Try a shorter transcript.');
     throw new Error('Groq API error ' + resp.status + ': ' + msg);
   }
 
   const data = await resp.json();
-  return data?.choices?.[0]?.message?.content || '';
+  const text = data?.choices?.[0]?.message?.content || '';
+  if (!text) throw new Error('Empty response from Groq. Stop reason: ' + (data?.choices?.[0]?.finish_reason || 'unknown'));
+  return text;
 }
 
 // ═══════════════════════════════════════════
