@@ -1111,7 +1111,8 @@ async function analyze() {
         currentResult = JSON.parse(fixed);
         renderResults(currentResult);
       } catch(e2) {
-        showErr('Parse error — please try running again.');
+        // Show first 400 chars of response for debugging
+        showErr('Parse error. Response preview: ' + raw.slice(0,400));
       }
     }
   } catch(e) {
