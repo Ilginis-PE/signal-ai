@@ -832,38 +832,56 @@ async function callGroq(prompt, systemInstruction) {
   const key = getApiKey();
   if (!key) { showErr('Please enter your OpenRouter API key above first.'); return null; }
 
-  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${key}`,
-      'HTTP-Referer': 'https://ilginis-pe.github.io/signal-ai/',
-      'X-Title': 'Signal.AI'
-    },
-    body: JSON.stringify({
-      model: 'meta-llama/llama-3.3-70b-instruct:free',
-      messages: [
-        { role: 'system', content: systemInstruction },
-        { role: 'user', content: prompt }
-      ],
-      temperature: 0.3,
-      max_tokens: 4000
-    })
-  });
+  // Free model fallback list - tries each in order if one fails
+  const FREE_MODELS = [
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'deepseek/deepseek-chat-v3-0324:free',
+    'mistralai/mistral-7b-instruct:free',
+    'google/gemma-3-12b-it:free',
+    'openrouter/auto'
+  ];
 
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    const msg = err?.error?.message || resp.statusText;
-    if (resp.status === 401) throw new Error('Invalid OpenRouter API key. Get a free key at openrouter.ai');
-    if (resp.status === 429) throw new Error('Rate limit hit. Wait 60 seconds and try again.');
-    if (resp.status === 413) throw new Error('Request too large. Try a shorter transcript.');
-    throw new Error('OpenRouter API error ' + resp.status + ': ' + msg);
+  let lastError = '';
+  for (const model of FREE_MODELS) {
+    try {
+      const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`,
+          'HTTP-Referer': 'https://ilginis-pe.github.io/signal-ai/',
+          'X-Title': 'Signal.AI'
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            { role: 'system', content: systemInstruction },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.3,
+          max_tokens: 4000
+        })
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        const msg = err?.error?.message || resp.statusText;
+        if (resp.status === 401) throw new Error('Invalid OpenRouter API key. Get a free key at openrouter.ai');
+        lastError = `${model} failed (${resp.status}): ${msg}`;
+        continue; // Try next model
+      }
+
+      const data = await resp.json();
+      const text = data?.choices?.[0]?.message?.content || '';
+      if (!text) { lastError = `${model} returned empty response`; continue; }
+      return text; // Success!
+    } catch(e) {
+      if (e.message.includes('Invalid OpenRouter')) throw e; // Don't retry auth errors
+      lastError = e.message;
+      continue;
+    }
   }
-
-  const data = await resp.json();
-  const text = data?.choices?.[0]?.message?.content || '';
-  if (!text) throw new Error('Empty response from Groq. Stop reason: ' + (data?.choices?.[0]?.finish_reason || 'unknown'));
-  return text;
+  throw new Error('All free models failed. Last error: ' + lastError);
 }
 
 // ═══════════════════════════════════════════
