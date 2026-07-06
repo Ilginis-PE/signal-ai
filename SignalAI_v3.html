@@ -406,11 +406,11 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
     <div style="font-weight:700;font-size:15px;margin-bottom:6px">Processing signal…</div>
     <div class="loading-steps">
       <div class="loading-step active" id="ls1">▸ Cleaning &amp; parsing transcript</div>
-      <div class="loading-step" id="ls2">▸ Extracting financial entities</div>
-      <div class="loading-step" id="ls3">▸ Scoring sentiment &amp; conviction</div>
-      <div class="loading-step" id="ls4">▸ Classifying claims &amp; catalysts</div>
-      <div class="loading-step" id="ls5">▸ Building bull/bear framework</div>
-      <div class="loading-step" id="ls6">▸ Generating quant output</div>
+      <div class="loading-step" id="ls2">▸ Call 1 — Scoring frameworks &amp; indicators</div>
+      <div class="loading-step" id="ls3">▸ Call 2 — Extracting insights &amp; catalysts</div>
+      <div class="loading-step" id="ls4">▸ Merging &amp; validating results</div>
+      <div class="loading-step" id="ls5">▸ Building visualizations</div>
+      <div class="loading-step" id="ls6">▸ Rendering quant output</div>
     </div>
   </div>
 
@@ -980,30 +980,81 @@ async function analyze() {
   animateLoadingSteps();
 
   try {
-    const raw = await callGroq('Analyze this financial video transcript and return JSON:\n\n' + content.slice(0, 8000), SYSTEM_PROMPT);
-    if (!raw) { setLoading(false); return; }
+    const transcript = content.slice(0, 8000);
 
-    let jsonStr = raw;
-    // Strip any markdown formatting Groq might add
-    jsonStr = jsonStr.replace(/```json/gi,'').replace(/```/g,'').trim();
-    // Extract just the JSON object if there's surrounding text
-    const match = jsonStr.match(/\{[\s\S]*\}/);
-    if (match) jsonStr = match[0];
-    jsonStr = jsonStr.trim();
+    // CALL 1: Scores, frameworks, themes, tickers
+    const PROMPT_1 = `Analyze this financial video transcript and return JSON.
 
-    try {
-      currentResult = JSON.parse(jsonStr);
-      renderResults(currentResult);
-    } catch(e) {
-      try {
-        const fixed = jsonStr.replace(/,\s*}/g,'}').replace(/,\s*]/g,']');
-        currentResult = JSON.parse(fixed);
-        renderResults(currentResult);
-      } catch(e2) {
-        // Show first 400 chars of response for debugging
-        showErr('Parse error. Response preview: ' + raw.slice(0,400));
+Return ONLY this JSON structure (keep values concise):
+{
+  "title": "string",
+  "summary": "2 sentence summary",
+  "sentimentLabel": "Bullish|Bearish|Neutral|Mixed",
+  "sentimentScore": 50,
+  "convictionScore": 50,
+  "dataDensityScore": 50,
+  "contrarianScore": 50,
+  "timeHorizon": "Short-term|Medium-term|Long-term|Mixed",
+  "timeHorizonMonths": 12,
+  "riskLevel": "Low|Medium|High",
+  "riskScore": 50,
+  "frameworkScores": {"mainstreamEconomicsBroken":50,"stateChangeFramework":50,"saveCurrencyVsBonds":50,"goldRevaluation":50,"hyperFinancialization":50,"fibonacciTechnical":50,"geopoliticalRisk":50},
+  "signalDepthScores": {"mechanismClarity":50,"historicalPrecedent":50,"falsifiability":50,"timeSpecificity":50,"dataSupport":50},
+  "signalDepthAverage": 50,
+  "assetClasses": ["string"],
+  "tickers": ["string"],
+  "macroThemes": ["string"],
+  "dataPoints": [{"label":"string","value":"string"}],
+  "factorExposure": ["string"]
+}`;
+
+    // CALL 2: Analysis, insights, catalysts
+    const PROMPT_2 = `Analyze this financial video transcript and return JSON.
+
+Return ONLY this JSON structure (keep values concise, max 3 items per array):
+{
+  "edgeAnalysis": "string",
+  "causalChain": "string",
+  "frameworkAlignment": "string",
+  "corpusConfluence": "string",
+  "regimeContext": "string",
+  "secondOrderEffects": ["string","string"],
+  "claims": [{"type":"FACT","text":"string","confidence":80}],
+  "bullCase": ["string","string","string"],
+  "bearCase": ["string","string","string"],
+  "catalysts": [{"name":"string","description":"string","horizon":"Short-term","icon":"📈","urgency":75}],
+  "entities": [{"name":"string","type":"PERSON","role":"string"}],
+  "contrarianFlags": ["string","string"],
+  "fibonacciLevels": ["string"],
+  "actionItems": ["string","string","string"],
+  "keyInsights": ["string","string","string"]
+}`;
+
+    // Run both calls
+    const [raw1, raw2] = await Promise.all([
+      callGroq(PROMPT_1 + '\n\nTRANSCRIPT:\n' + transcript, 'You are a quantitative financial analyst. Return only valid JSON. No markdown. No explanation.'),
+      callGroq(PROMPT_2 + '\n\nTRANSCRIPT:\n' + transcript, 'You are a quantitative financial analyst. Return only valid JSON. No markdown. No explanation.')
+    ]);
+
+    function parseJSON(raw) {
+      let s = raw.replace(/```json/gi,'').replace(/```/g,'').trim();
+      const m = s.match(/\{[\s\S]*\}/);
+      if (m) s = m[0];
+      try { return JSON.parse(s); }
+      catch(e) {
+        const fixed = s.replace(/,\s*}/g,'}').replace(/,\s*]/g,']');
+        return JSON.parse(fixed);
       }
     }
+
+    let part1, part2;
+    try { part1 = parseJSON(raw1); } catch(e) { showErr('Part 1 parse error: ' + raw1.slice(0,300)); setLoading(false); return; }
+    try { part2 = parseJSON(raw2); } catch(e) { showErr('Part 2 parse error: ' + raw2.slice(0,300)); setLoading(false); return; }
+
+    // Merge both results
+    currentResult = { ...part1, ...part2 };
+    renderResults(currentResult);
+
   } catch(e) {
     showErr(e.message || 'Analysis failed. Check your API key and internet connection.');
   }
