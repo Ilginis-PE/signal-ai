@@ -354,7 +354,7 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
   <div class="api-banner" id="api-banner">
     <div class="api-banner-title">🔑 Enter your free Groq API Key to get started</div>
     <div class="api-banner-sub">
-      Get your free key at <strong style="color:var(--text)">console.groq.com</strong> → API Keys → Create API Key. Free, no credit card, never expires. Saved locally in your browser.
+      Get your free key at <strong style="color:var(--text)">openrouter.ai</strong> → API Keys → Create API Key. Free, no credit card, never expires. Saved locally in your browser.
     </div>
     <div class="api-input-row">
       <input class="api-input" type="password" id="api-key-input" placeholder="AIzaSy..." />
@@ -362,14 +362,14 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
     </div>
   </div>
   <div class="api-saved" id="api-saved">
-    <span>✅ Groq API key saved — ready to analyze</span>
+    <span>✅ OpenRouter API key saved — ready to analyze</span>
     <button class="api-change-btn" onclick="changeApiKey()">Change Key</button>
   </div>
 
   <div class="hero">
     <div class="hero-eyebrow">Quantitative Media Intelligence</div>
     <h1>Deep signal extraction from<br><span class="accent">financial video content</span></h1>
-    <p>Paste a transcript from any financial video. Get quant scores, claim classification, catalyst mapping, entity analysis, bull/bear cases, and cross-video pattern detection — powered by free Groq AI.</p>
+    <p>Paste a transcript from any financial video. Get quant scores, claim classification, catalyst mapping, entity analysis, bull/bear cases, and cross-video pattern detection — powered by free OpenRouter AI.</p>
   </div>
 
   <div class="card">
@@ -830,32 +830,34 @@ Return this exact JSON structure:
 
 async function callGroq(prompt, systemInstruction) {
   const key = getApiKey();
-  if (!key) { showErr('Please enter your Groq API key above first.'); return null; }
+  if (!key) { showErr('Please enter your OpenRouter API key above first.'); return null; }
 
-  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${key}`
+      'Authorization': `Bearer ${key}`,
+      'HTTP-Referer': 'https://ilginis-pe.github.io/signal-ai/',
+      'X-Title': 'Signal.AI'
     },
     body: JSON.stringify({
-      model: 'llama-3.1-8b-instant',
+      model: 'meta-llama/llama-4-maverick:free',
       messages: [
-        { role: 'system', content: systemInstruction.slice(0, 3500) },
+        { role: 'system', content: systemInstruction },
         { role: 'user', content: prompt }
       ],
       temperature: 0.3,
-      max_tokens: 3000
+      max_tokens: 4000
     })
   });
 
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}));
     const msg = err?.error?.message || resp.statusText;
-    if (resp.status === 401) throw new Error('Invalid Groq API key. Get a free key at console.groq.com');
+    if (resp.status === 401) throw new Error('Invalid OpenRouter API key. Get a free key at openrouter.ai');
     if (resp.status === 429) throw new Error('Rate limit hit. Wait 60 seconds and try again.');
     if (resp.status === 413) throw new Error('Request too large. Try a shorter transcript.');
-    throw new Error('Groq API error ' + resp.status + ': ' + msg);
+    throw new Error('OpenRouter API error ' + resp.status + ': ' + msg);
   }
 
   const data = await resp.json();
@@ -867,13 +869,13 @@ async function callGroq(prompt, systemInstruction) {
 // ═══════════════════════════════════════════
 // API KEY MANAGEMENT
 // ═══════════════════════════════════════════
-function getApiKey() { return localStorage.getItem('signal_ai_groq_key') || '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'; }
+function getApiKey() { return localStorage.getItem('signal_ai_openrouter_key') || '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'; }
 
 function saveApiKey() {
   const key = document.getElementById('api-key-input').value.trim();
-  if (!key) return alert('Please paste your Groq API key.');
+  if (!key) return alert('Please paste your OpenRouter API key.');
   if (key.length < 20) return alert('That key looks too short. Please paste the full API key.');
-  localStorage.setItem('signal_ai_groq_key', key);
+  localStorage.setItem('signal_ai_openrouter_key', key);
   document.getElementById('api-banner').classList.add('hidden');
   document.getElementById('api-saved').classList.add('show');
 }
@@ -886,7 +888,7 @@ function changeApiKey() {
 
 function initApiKey() {
   // Key is hardcoded - always hide banner and show saved
-  localStorage.setItem('signal_ai_groq_key', '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');
+  localStorage.setItem('signal_ai_openrouter_key', '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');
   document.getElementById('api-banner').classList.add('hidden');
   document.getElementById('api-saved').classList.add('show');
 }
