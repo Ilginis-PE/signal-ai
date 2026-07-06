@@ -775,7 +775,7 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
 // ═══════════════════════════════════════════
 const GROQ_MODEL = 'llama-3.1-8b-instant'; // Fast, free, never expires
 
-const SYSTEM_PROMPT = `You are an elite quantitative financial analyst. Analyze the transcript and return ONLY a valid JSON object. No markdown. No explanation. Start with { end with }. Nothing else.
+const SYSTEM_PROMPT = `You are an elite quantitative financial analyst. Analyze the transcript and return ONLY a valid JSON object. IMPORTANT: Your response must be valid JSON. No markdown. No explanation. Start with { end with }. Nothing else.
 
 FRAMEWORKS (score each 0-100):
 1. MAINSTREAM ECONOMICS BROKEN (Snider): Fed wrong 50yrs, yield curves real signal, CPI/GDP misleading
@@ -980,7 +980,7 @@ async function analyze() {
   animateLoadingSteps();
 
   try {
-    const raw = await callGroq('Analyze this financial video transcript:\n\n' + content.slice(0, 14000), SYSTEM_PROMPT);
+    const raw = await callGroq('Analyze this financial video transcript and return JSON:\n\n' + content.slice(0, 8000), SYSTEM_PROMPT);
     if (!raw) { setLoading(false); return; }
 
     let jsonStr = raw;
@@ -1285,7 +1285,7 @@ async function askQ() {
   const btn=document.getElementById('qa-btn'); btn.textContent='…'; btn.disabled=true;
   document.getElementById('qa-answer').classList.remove('show');
   try {
-    const ans = await callGroq(`Transcript:\n${currentTranscript.slice(0,8000)}\n\nQuestion: ${q}`, 'You are a quantitative financial analyst. Answer questions about the video transcript concisely and precisely, citing specific evidence from the transcript.');
+    const ans = await callGroq(`Transcript:\n${currentTranscript.slice(0,6000)}\n\nQuestion: ${q}\n\nAnswer in plain text:`, 'You are a quantitative financial analyst. Answer questions about the video transcript concisely and precisely, citing specific evidence from the transcript.');
     const el=document.getElementById('qa-answer'); el.textContent=ans||'No answer found.'; el.classList.add('show');
   } catch(e) { const el=document.getElementById('qa-answer'); el.textContent='Error: '+e.message; el.classList.add('show'); }
   btn.textContent='Ask'; btn.disabled=false;
