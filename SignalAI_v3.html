@@ -354,7 +354,7 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
   <div class="api-banner" id="api-banner">
     <div class="api-banner-title">🔑 Enter your free Groq API Key to get started</div>
     <div class="api-banner-sub">
-      Get your free key at <strong style="color:var(--text)">platform.deepseek.com</strong> → API Keys → Create API Key. Free, no credit card, never expires. Saved locally in your browser.
+      Get your free key at <strong style="color:var(--text)">console.mistral.ai</strong> → API Keys → Create API Key. Free, no credit card, never expires. Saved locally in your browser.
     </div>
     <div class="api-input-row">
       <input class="api-input" type="password" id="api-key-input" placeholder="AIzaSy..." />
@@ -362,14 +362,14 @@ input::placeholder, textarea::placeholder { color: #2A3550; }
     </div>
   </div>
   <div class="api-saved" id="api-saved">
-    <span>✅ DeepSeek API key saved — ready to analyze</span>
+    <span>✅ Mistral API key saved — ready to analyze</span>
     <button class="api-change-btn" onclick="changeApiKey()">Change Key</button>
   </div>
 
   <div class="hero">
     <div class="hero-eyebrow">Quantitative Media Intelligence</div>
     <h1>Deep signal extraction from<br><span class="accent">financial video content</span></h1>
-    <p>Paste a transcript from any financial video. Get quant scores, claim classification, catalyst mapping, entity analysis, bull/bear cases, and cross-video pattern detection — powered by DeepSeek AI.</p>
+    <p>Paste a transcript from any financial video. Get quant scores, claim classification, catalyst mapping, entity analysis, bull/bear cases, and cross-video pattern detection — powered by Mistral AI.</p>
   </div>
 
   <div class="card">
@@ -830,17 +830,17 @@ Return this exact JSON structure:
 
 async function callGroq(prompt, systemInstruction) {
   const key = getApiKey();
-  if (!key) { showErr('Please enter your DeepSeek API key above first.'); return null; }
+  if (!key) { showErr('Please enter your Mistral API key above first.'); return null; }
 
   // Free model fallback list - tries each in order if one fails
-  const resp = await fetch('https://api.deepseek.com/chat/completions', {
+  const resp = await fetch('https://api.mistral.ai/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${key}`
     },
     body: JSON.stringify({
-      model: 'deepseek-chat',
+      model: 'mistral-small-latest',
       messages: [
         { role: 'system', content: systemInstruction },
         { role: 'user', content: prompt }
@@ -854,27 +854,27 @@ async function callGroq(prompt, systemInstruction) {
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}));
     const msg = err?.error?.message || resp.statusText;
-    if (resp.status === 401) throw new Error('Invalid DeepSeek API key. Check platform.deepseek.com');
+    if (resp.status === 401) throw new Error('Invalid Mistral API key. Check console.mistral.ai');
     if (resp.status === 429) throw new Error('Rate limit hit. Wait 60 seconds and try again.');
-    throw new Error('DeepSeek API error ' + resp.status + ': ' + msg);
+    throw new Error('Mistral API error ' + resp.status + ': ' + msg);
   }
 
   const data = await resp.json();
   const text = data?.choices?.[0]?.message?.content || '';
-  if (!text) throw new Error('Empty response from DeepSeek.');
+  if (!text) throw new Error('Empty response from Mistral.');
   return text;
 }
 
 // ═══════════════════════════════════════════
 // API KEY MANAGEMENT
 // ═══════════════════════════════════════════
-function getApiKey() { return localStorage.getItem('signal_ai_deepseek_key') || 'sk-e5c6aee494cf4cebb386b1fbe28e61f2'; }
+function getApiKey() { return localStorage.getItem('signal_ai_mistral_key') || 'c51ZVmkIxFtrumoiZLtqFqZpmwuyTwuY'; }
 
 function saveApiKey() {
   const key = document.getElementById('api-key-input').value.trim();
-  if (!key) return alert('Please paste your DeepSeek API key.');
+  if (!key) return alert('Please paste your Mistral API key.');
   if (key.length < 20) return alert('That key looks too short. Please paste the full API key.');
-  localStorage.setItem('signal_ai_deepseek_key', key);
+  localStorage.setItem('signal_ai_mistral_key', key);
   document.getElementById('api-banner').classList.add('hidden');
   document.getElementById('api-saved').classList.add('show');
 }
@@ -887,7 +887,7 @@ function changeApiKey() {
 
 function initApiKey() {
   // Key is hardcoded - always hide banner and show saved
-  localStorage.setItem('signal_ai_deepseek_key', 'sk-e5c6aee494cf4cebb386b1fbe28e61f2');
+  localStorage.setItem('signal_ai_mistral_key', 'c51ZVmkIxFtrumoiZLtqFqZpmwuyTwuY');
   document.getElementById('api-banner').classList.add('hidden');
   document.getElementById('api-saved').classList.add('show');
 }
