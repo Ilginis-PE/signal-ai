@@ -1302,6 +1302,7 @@ function renderResults(r) {
   if (r.contrarianFlags?.length) { document.getElementById('contrarian-list').innerHTML=r.contrarianFlags.map(f=>bitem(f,'#EF4444')).join(''); document.getElementById('contrarian-card').style.display='block'; } else { document.getElementById('contrarian-card').style.display='none'; }
   if (r.actionItems?.length) { document.getElementById('actions-list').innerHTML=r.actionItems.map(a=>bitem(a,'#10B981')).join(''); document.getElementById('actions-card').style.display='block'; } else { document.getElementById('actions-card').style.display='none'; }
 
+  renderDeepAnalysis(currentResult);
   document.getElementById('results').classList.add('show');
   setTimeout(()=>{ document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}); animateMeters(); },100);
 }
