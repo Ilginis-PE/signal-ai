@@ -1151,7 +1151,12 @@ TRANSCRIPT:
 
     let part1, part2;
     try { part1 = parseJSON(raw1); } catch(e) { showErr('Analysis error (part 1): ' + raw1?.slice(0,200)); setLoading(false); return; }
-    try { part2 = parseJSON(raw2); } catch(e) { showErr('Analysis error (part 2): ' + raw2?.slice(0,200)); setLoading(false); return; }
+    try { part2 = parseJSON(raw2); } catch(e) { showErr('Part 2 parse error. Raw: ' + (raw2||'empty').slice(0,400)); setLoading(false); return; }
+    // Debug: check if deep fields exist in part2
+    console.log('Part2 keys:', Object.keys(part2));
+    console.log('Has coreMechanism:', !!part2.coreMechanism);
+    console.log('Has blindSpots:', !!part2.blindSpots);
+    console.log('Has forkDecision:', !!part2.forkDecision);
 
     // Normalize array fields
     const normalize = (r) => {
