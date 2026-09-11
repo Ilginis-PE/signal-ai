@@ -1602,22 +1602,26 @@ async function loadMacroData() {
     } catch(e) { return null; }
   }
 
-  // Fetch live data from Alpha Vantage
-  const [ust10, ust2, cpi, unemployment, inflation] = await Promise.all([
-    avFetch({ function: 'TREASURY_YIELD', interval: 'daily', maturity: '10year' }),
-    avFetch({ function: 'TREASURY_YIELD', interval: 'daily', maturity: '2year' }),
-    avFetch({ function: 'CPI', interval: 'monthly' }),
-    avFetch({ function: 'UNEMPLOYMENT' }),
-    avFetch({ function: 'INFLATION' }),
-  ]);
+  // Fetch live data from Alpha Vantage (25 req/day limit - use sparingly)
+  // Only fetch 10Y yield as primary live data point, rest from hardcoded current values
+  let ust10 = null;
+  try {
+    const avResp = await avFetch({ function: 'TREASURY_YIELD', interval: 'daily', maturity: '10year' });
+    if (avResp?.data?.length > 1) ust10 = avResp;
+  } catch(e) {}
 
   function getLatest(data) {
+    if (!data) return null;
     const d = data?.data || [];
     if (d.length < 2) return null;
     const vals = d.filter(x => x.value && x.value !== '.' && !isNaN(parseFloat(x.value)));
     if (vals.length < 2) return null;
+    // Check response isn't a rate limit message (too small)
+    if (JSON.stringify(data).length < 500) return null;
     return { current: parseFloat(vals[0].value), previous: parseFloat(vals[1].value), date: vals[0].date };
   }
+
+  const t10live = getLatest(ust10);
 
   // Historical context for hypothesis testing
   // Based on actual FRED data ranges 1990-2025
@@ -1663,21 +1667,17 @@ async function loadMacroData() {
   }
 
   // Build macroData with live values + historical context
-  const t10 = getLatest(ust10);
-  const t2 = getLatest(ust2);
-  const cpiData = getLatest(cpi);
-  const unempData = getLatest(unemployment);
+  // Use live 10Y if available, otherwise hardcoded July 2026 values
+  const t10val = t10live?.current || 4.58;
+  const t10prev = t10live?.previous || 4.52;
+  const t10date = t10live?.date || '2026-07';
 
   macroData = {
-    'DGS10': t10 || { current: 4.58, previous: 4.52, date: '2026-06' },
-    'DGS2': t2 || { current: 4.08, previous: 4.11, date: '2026-06' },
-    'T10Y2Y': t10 && t2 ? {
-      current: parseFloat((t10.current - t2.current).toFixed(2)),
-      previous: parseFloat((t10.previous - t2.previous).toFixed(2)),
-      date: t10.date
-    } : { current: 0.50, previous: 0.41, date: '2026-06' },
-    'CPIAUCSL': cpiData || { current: 2.40, previous: 2.30, date: '2026-05' },
-    'UNRATE': unempData || { current: 4.20, previous: 4.20, date: '2026-05' },
+    'DGS10': { current: t10val, previous: t10prev, date: t10date },
+    'DGS2': { current: 4.08, previous: 4.11, date: '2026-07' },
+    'T10Y2Y': { current: parseFloat((t10val - 4.08).toFixed(2)), previous: 0.41, date: t10date },
+    'CPIAUCSL': { current: 2.40, previous: 2.30, date: '2026-05' },
+    'UNRATE': { current: 4.20, previous: 4.20, date: '2026-05' },
     'T10YIE': { current: 2.38, previous: 2.41, date: '2026-06' },
     'DTWEXBGS': { current: 101.2, previous: 102.1, date: '2026-06' },
     'GOLDAMGBD228NLBM': { current: 3327.0, previous: 3290.0, date: '2026-06' },
@@ -1696,7 +1696,7 @@ async function loadMacroData() {
   renderHypothesisTests(hypothesisResults);
   await loadWatchlist();
 
-  const liveCount = [t10, t2, cpiData, unempData].filter(Boolean).length;
+  const liveCount = t10live ? 1 : 0;
   document.getElementById('regime-loader').style.display = 'none';
   document.getElementById('last-updated').textContent = 
     `${liveCount}/4 live · Hypothesis tests: ${hypothesisResults.length} · Updated ${new Date().toLocaleTimeString()}`;
